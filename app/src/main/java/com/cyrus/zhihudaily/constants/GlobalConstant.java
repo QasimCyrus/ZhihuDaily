@@ -6,12 +6,12 @@ package com.cyrus.zhihudaily.constants;
  * Created by Cyrus on 2016/4/23.
  */
 public class GlobalConstant {
-    public static final String SplashUrl
+    public static final String SPLASH_URL
             = "http://news-at.zhihu.com/api/4/start-image/720*1280";
-    public static final String LatestNewsData
+    public static final String LATEST_NEWS_DATA
             = "http://news-at.zhihu.com/api/4/news/latest";
-    public static final String BeforeNewsUrl
+    public static final String BEFORE_NEWS_URL
             = "http://news.at.zhihu.com/api/4/news/before/";
-    public static final String DetailUrl
+    public static final String DETAIL_URL
             = "http://news-at.zhihu.com/api/4/news/";
 }

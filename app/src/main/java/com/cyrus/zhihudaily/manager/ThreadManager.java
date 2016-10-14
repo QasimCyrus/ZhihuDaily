@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 线程池管理
+ * 线程池管理，单例模式
  * <p>
  * Created by Cyrus on 2016/4/23.
  */
@@ -17,7 +17,7 @@ public class ThreadManager {
     private ThreadManager() {
     }
 
-    //提供外部方法  是外部获取线程代理
+    //提供外部方法，使外部获取线程代理
     public static ThreadManager getInstance() {
         return instance;
     }

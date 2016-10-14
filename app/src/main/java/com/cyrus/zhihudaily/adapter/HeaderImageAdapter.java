@@ -8,8 +8,8 @@ import android.widget.TextView;
 
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.models.TopStory;
+import com.cyrus.zhihudaily.utils.LoadImageUtils;
 import com.cyrus.zhihudaily.utils.UiUtils;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class HeaderImageAdapter extends PagerAdapter {
         TopStory topStory = mTopStories.get(position);
 
         textView.setText(topStory.getTitle());
-        Picasso.with(UiUtils.getContext()).load(topStory.getImage()).into(imageView);
+        LoadImageUtils.loadImage(topStory.getImage(), imageView);
         container.addView(view);
 
         return view;

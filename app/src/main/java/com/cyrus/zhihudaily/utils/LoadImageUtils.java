@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso;
 public class LoadImageUtils {
 
     public static void loadImage(String url, ImageView imageView) {
-        if ("default".equals(url)) {
+        if ("default".equals(url) || url == null) {
             Log.d("加载图片是", url);
             Picasso.with(UiUtils.getContext()).load(R.drawable.splash).into(imageView);
         }

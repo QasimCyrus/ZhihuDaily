@@ -14,9 +14,10 @@ import com.cyrus.zhihudaily.models.NewsData;
 import com.cyrus.zhihudaily.models.Story;
 import com.cyrus.zhihudaily.models.TopStory;
 import com.cyrus.zhihudaily.utils.DateUtils;
+import com.cyrus.zhihudaily.utils.LoadImageUtils;
 import com.cyrus.zhihudaily.utils.UiUtils;
-import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.view.View.GONE;
@@ -42,6 +43,10 @@ public class NewsAdapter
     private static final int TYPE_DAILY = 1;
 
     /**
+     * 新闻结构体
+     */
+    private NewsData mNewsData;
+    /**
      * 头条新闻列表
      */
     private List<TopStory> mTopStories;
@@ -66,9 +71,9 @@ public class NewsAdapter
     private String mLastDate;
 
     public NewsAdapter(NewsData newsData) {
-        mTopStories = newsData.getTop_stories();
-        mStories = newsData.getStories();
-
+        mNewsData = newsData;
+        mTopStories = mNewsData.getTop_stories();
+        mStories = mNewsData.getStories();
     }
 
     @Override
@@ -105,6 +110,9 @@ public class NewsAdapter
             mTvTitle = cardHolder.getTvTitle();
 
             Story story = mStories.get(position - 1);
+            /*
+             * 是否显示日期
+             */
             if (position == 1) {//position为0是头条，从position为1开始是每日新闻
                 mTvTime.setVisibility(VISIBLE);
                 mTvTime.setText(R.string.news_list_today);
@@ -120,8 +128,10 @@ public class NewsAdapter
                     mLastDate = story.getDate();
                 }
             }
+            //设置卡片标题
             mTvTitle.setText(story.getTitle());
-            Picasso.with(UiUtils.getContext()).load(story.getImages().get(0)).into(mIvTitle);
+            //设置卡片图片
+            LoadImageUtils.loadImage(story.getImages().get(0), mIvTitle);
         }
     }
 
@@ -155,6 +165,12 @@ public class NewsAdapter
     public void onPageScrollStateChanged(int state) {
     }
 
+    public void addItem(ArrayList<Story> stories) {
+        int beforeSize = mStories.size();
+        mStories.addAll(beforeSize, stories);
+        notifyItemRangeInserted(beforeSize + 1, stories.size());
+    }
+
     /**
      * 用于自动轮播头条图片
      */
@@ -170,6 +186,10 @@ public class NewsAdapter
             mHeaderPager.setCurrentItem(currentItem);
             UiUtils.postDelayed(this, 4000);//设置完位置再重新执行循环
         }
+    }
+
+    public void setNewsData(NewsData newsData) {
+        mNewsData = newsData;
     }
 
 }

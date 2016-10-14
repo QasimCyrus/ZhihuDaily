@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.adapter.NewsAdapter;
 import com.cyrus.zhihudaily.constants.GlobalConstant;
+import com.cyrus.zhihudaily.manager.ThreadManager;
 import com.cyrus.zhihudaily.models.NewsData;
 import com.cyrus.zhihudaily.models.Story;
 import com.cyrus.zhihudaily.utils.DateUtils;
@@ -79,6 +80,42 @@ public class NewsListFragment extends Fragment implements SwipeRefreshLayout.OnR
         mNewsAdapter = new NewsAdapter(mNewsData);
         mRvNews.setAdapter(mNewsAdapter);
         mSrlLoad.setOnRefreshListener(this);
+        mRvNews.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    //上拉加载
+                    int last = mLlManager.findLastVisibleItemPosition();
+                    int totalItemCount = mLlManager.getItemCount();
+
+                    if (last + 1 == totalItemCount) {
+                        mSrlLoad.setRefreshing(true);
+                        ThreadManager.getInstance().createLongPool().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                final NewsData dailyNewsData = LoadingNewsUtils
+                                        .load(GlobalConstant.BEFORE_NEWS_URL + sBeforeDate);
+                                UiUtils.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (dailyNewsData != null) {
+                                            mNewsAdapter.addItem(dailyNewsData.getStories());
+                                            sBeforeDate = DateUtils.getBeforeDay(sBeforeDate, 1);
+                                            mSrlLoad.setRefreshing(false);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+            }
+        });
 
         return view;
     }
@@ -90,7 +127,7 @@ public class NewsListFragment extends Fragment implements SwipeRefreshLayout.OnR
      */
     private LoadingPage.LoadResult loadNews() {
         ArrayList<Story> stories;
-        mNewsData = LoadingNewsUtils.load(GlobalConstant.LatestNewsData);
+        mNewsData = LoadingNewsUtils.load(GlobalConstant.LATEST_NEWS_DATA);
         if (mNewsData != null) {
             stories = mNewsData.getStories();
             sCurrentDate = mNewsData.getDate();
@@ -108,6 +145,20 @@ public class NewsListFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        //TODO 下拉刷新
+        //下拉刷新
+        ThreadManager.getInstance().createLongPool().execute(new Runnable() {
+            @Override
+            public void run() {
+                loadNews();
+                mNewsAdapter.setNewsData(mNewsData);
+                UiUtils.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mNewsAdapter.notifyDataSetChanged();
+                        mSrlLoad.setRefreshing(false);
+                    }
+                });
+            }
+        });
     }
 }

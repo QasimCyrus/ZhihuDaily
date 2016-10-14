@@ -50,7 +50,7 @@ public class LoadingNewsUtils {
                 }
             }
         } else if (url.contains("before")) {//要获取以往的数据
-            String date = url.replace(GlobalConstant.BeforeNewsUrl, "");
+            String date = url.replace(GlobalConstant.BEFORE_NEWS_URL, "");
             sDate = date;
             if (newsDB.isTodayDataExist(date)) {//数据库中有以前的数据
                 String json = newsDB.find(date);

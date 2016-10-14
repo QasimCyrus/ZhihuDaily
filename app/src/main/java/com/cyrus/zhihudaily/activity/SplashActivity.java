@@ -52,7 +52,7 @@ public class SplashActivity extends BaseActivity {
             ThreadManager.getInstance().createLongPool().execute(new Runnable() {
                 @Override
                 public void run() {
-                    final String strSplashUrl = NetUtils.load(GlobalConstant.SplashUrl);
+                    final String strSplashUrl = NetUtils.load(GlobalConstant.SPLASH_URL);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
