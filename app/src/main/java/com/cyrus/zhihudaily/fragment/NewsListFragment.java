@@ -1,6 +1,5 @@
 package com.cyrus.zhihudaily.fragment;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -40,7 +39,6 @@ public class NewsListFragment extends Fragment implements SwipeRefreshLayout.OnR
     private NewsData mNewsData;
     private FrameLayout mFlContent;
     private SwipeRefreshLayout mSrlLoad;
-    private SharedPreferences mSp;
     private NewsAdapter mNewsAdapter;
     private LinearLayoutManager mLlManager;
 

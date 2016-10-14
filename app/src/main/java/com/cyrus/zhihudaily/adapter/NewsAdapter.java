@@ -1,7 +1,9 @@
 package com.cyrus.zhihudaily.adapter;
 
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -64,11 +66,27 @@ public class NewsAdapter
     /*
      * 每日新闻界面的控件
      */
+    private CardView mCvItem;
     private TextView mTvTime;
     private ImageView mIvTitle;
     private TextView mTvTitle;
 
+    /**
+     * 记录已经加载过的数据日期
+     */
     private String mLastDate;
+    /**
+     * 判断当前大图是否轮播
+     */
+    private boolean mIsRecycle;
+    /**
+     * 记录当前大图位置
+     */
+    private int mCurrentTopItem;
+    /**
+     * 控制自动轮播的任务
+     */
+    private AutoTask mAutoTask;
 
     public NewsAdapter(NewsData newsData) {
         mNewsData = newsData;
@@ -90,7 +108,7 @@ public class NewsAdapter
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof HeaderHolder) {
             HeaderHolder headerHolder = (HeaderHolder) holder;
             mHeaderPager = headerHolder.getViewPager();
@@ -99,12 +117,25 @@ public class NewsAdapter
             HeaderImageAdapter headerAdapter = new HeaderImageAdapter(mTopStories);
             mHeaderPager.setAdapter(headerAdapter);
             mHeaderPager.addOnPageChangeListener(this);
+            mHeaderPager.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
+                        mAutoTask.stop();
+                    } else {
+                        mAutoTask.start();
+                    }
+                    return false;
+                }
+            });
+            mHeaderPager.setCurrentItem(mCurrentTopItem);
 
             //执行头条轮播
-            AutoTask autoTask = new AutoTask();
-            UiUtils.postDelayed(autoTask, 4000);
+            mAutoTask = new AutoTask();
+            mAutoTask.start();
         } else if (holder instanceof CardHolder) {
             CardHolder cardHolder = (CardHolder) holder;
+            mCvItem = cardHolder.getCardView();
             mTvTime = cardHolder.getTvTime();
             mIvTitle = cardHolder.getIvTitle();
             mTvTitle = cardHolder.getTvTitle();
@@ -132,6 +163,12 @@ public class NewsAdapter
             mTvTitle.setText(story.getTitle());
             //设置卡片图片
             LoadImageUtils.loadImage(story.getImages().get(0), mIvTitle);
+            mCvItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO 设置卡片点击事件
+                }
+            });
         }
     }
 
@@ -171,25 +208,39 @@ public class NewsAdapter
         notifyItemRangeInserted(beforeSize + 1, stories.size());
     }
 
+    public void setNewsData(NewsData newsData) {
+        mNewsData = newsData;
+    }
+
     /**
      * 用于自动轮播头条图片
      */
     private class AutoTask implements Runnable {
         @Override
         public void run() {
-            UiUtils.cancel(this);//先取消循环的执行
-            int currentItem = mHeaderPager.getCurrentItem();
-            currentItem++;
-            if (currentItem >= 5) {
-                currentItem = 0;
+            if (mIsRecycle) {
+                UiUtils.cancel(this);//先取消循环的执行
+                mCurrentTopItem = mHeaderPager.getCurrentItem();
+                mCurrentTopItem = ++mCurrentTopItem % 5;
+                mHeaderPager.setCurrentItem(mCurrentTopItem);
+                UiUtils.postDelayed(this, 4000);//设置完位置再重新执行循环
             }
-            mHeaderPager.setCurrentItem(currentItem);
-            UiUtils.postDelayed(this, 4000);//设置完位置再重新执行循环
         }
-    }
 
-    public void setNewsData(NewsData newsData) {
-        mNewsData = newsData;
+        void start() {
+            if (!mIsRecycle) {
+                UiUtils.cancel(this);
+                mIsRecycle = true;
+                UiUtils.postDelayed(this, 4000);
+            }
+        }
+
+        void stop() {
+            if (mIsRecycle) {
+                mIsRecycle = false;
+                UiUtils.cancel(this);
+            }
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package com.cyrus.zhihudaily.holder;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,6 +16,7 @@ import com.cyrus.zhihudaily.R;
 
 public class CardHolder extends RecyclerView.ViewHolder {
 
+    private CardView mCardView;
     private TextView mTvTime;
     private TextView mTvTitle;
     private ImageView mIvTitle;
@@ -31,8 +33,14 @@ public class CardHolder extends RecyclerView.ViewHolder {
         return mIvTitle;
     }
 
+    public CardView getCardView() {
+        return mCardView;
+    }
+
     public CardHolder(View itemView) {
         super(itemView);
+
+        mCardView = (CardView) itemView.findViewById(R.id.cv_news_item);
 
         mTvTime = (TextView) itemView.findViewById(R.id.tv_time);
         mTvTitle = (TextView) itemView.findViewById(R.id.tv_title);

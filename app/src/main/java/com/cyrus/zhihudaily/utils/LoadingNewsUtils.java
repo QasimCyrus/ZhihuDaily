@@ -15,7 +15,6 @@ import com.google.gson.Gson;
 public class LoadingNewsUtils {
 
     private static String sDate;
-    private boolean mState;
 
     public static NewsData load(String url) {
         NewsDB newsDB = new NewsDB();
@@ -79,14 +78,6 @@ public class LoadingNewsUtils {
         }
 
         return newsData;
-    }
-
-    public boolean isState() {
-        return mState;
-    }
-
-    public void setState(boolean state) {
-        mState = state;
     }
 
 }
