@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.cyrus.zhihudaily.R;
-import com.cyrus.zhihudaily.adapter.CardAdapter;
+import com.cyrus.zhihudaily.adapter.NewsAdapter;
 import com.cyrus.zhihudaily.constants.GlobalConstant;
 import com.cyrus.zhihudaily.models.NewsData;
 import com.cyrus.zhihudaily.models.Story;
@@ -40,7 +40,7 @@ public class NewsListFragment extends Fragment implements SwipeRefreshLayout.OnR
     private FrameLayout mFlContent;
     private SwipeRefreshLayout mSrlLoad;
     private SharedPreferences mSp;
-    private CardAdapter mCardAdapter;
+    private NewsAdapter mNewsAdapter;
     private LinearLayoutManager mLlManager;
 
     @Nullable
@@ -76,6 +76,8 @@ public class NewsListFragment extends Fragment implements SwipeRefreshLayout.OnR
         mRvNews = (RecyclerView) view.findViewById(R.id.rv_news_list);
         mLlManager = new LinearLayoutManager(UiUtils.getContext());
         mRvNews.setLayoutManager(mLlManager);
+        mNewsAdapter = new NewsAdapter(mNewsData);
+        mRvNews.setAdapter(mNewsAdapter);
         mSrlLoad.setOnRefreshListener(this);
 
         return view;
@@ -106,6 +108,6 @@ public class NewsListFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-
+        //TODO 下拉刷新
     }
 }

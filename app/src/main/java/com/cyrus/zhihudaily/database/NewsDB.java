@@ -69,7 +69,7 @@ public class NewsDB {
         SQLiteDatabase db = mHelper.getReadableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_JSON, json);
-        db.update(TABLE_NAME, contentValues, COLUMN_DATE, new String[]{date});
+        db.update(TABLE_NAME, contentValues, COLUMN_DATE+"=?", new String[]{date});
         db.close();
     }
 
