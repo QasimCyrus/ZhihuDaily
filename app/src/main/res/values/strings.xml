@@ -1,6 +1,9 @@
 <resources>
-    <string name="app_name">Zhihu Daily</string>
+    <string name="app_name">知乎日报</string>
     <string name="news_list_today">今日新闻</string>
     <string name="news_content">如何看待当下这种越来越普遍的“沉默”人格？</string>
-    <string name="news_picture">news_picture</string>
+    <string name="news_picture">新闻图片</string>
+    <string name="drawer_open">开启</string>
+    <string name="drawer_close">关闭</string>
+    <string name="toolbar_favorite">收藏</string>
 </resources>

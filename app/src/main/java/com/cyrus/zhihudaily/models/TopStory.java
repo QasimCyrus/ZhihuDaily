@@ -1,5 +1,7 @@
 package com.cyrus.zhihudaily.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**
@@ -8,50 +10,56 @@ import java.io.Serializable;
  * Created by Cyrus on 2016/5/2.
  */
 public class TopStory implements Serializable {
-    private String ga_prefix;
-    private String id;
-    private String title;
-    private String type;
-    private String image;
+
+    @SerializedName("ga_prefix")
+    private String mGaPrefix;
+    @SerializedName("id")
+    private String mId;
+    @SerializedName("title")
+    private String mTitle;
+    @SerializedName("type")
+    private String mType;
+    @SerializedName("image")
+    private String mImage;
 
     public String getImage() {
-        return image;
+        return mImage;
     }
 
     public void setImage(String image) {
-        this.image = image;
+        this.mImage = image;
     }
 
-    public String getGa_prefix() {
-        return ga_prefix;
+    public String getGaPrefix() {
+        return mGaPrefix;
     }
 
-    public void setGa_prefix(String ga_prefix) {
-        this.ga_prefix = ga_prefix;
+    public void setGaPrefix(String gaPrefix) {
+        this.mGaPrefix = gaPrefix;
     }
 
     public String getId() {
-        return id;
+        return mId;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.mId = id;
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 
     public String getType() {
-        return type;
+        return mType;
     }
 
     public void setType(String type) {
-        this.type = type;
+        this.mType = type;
     }
 
 

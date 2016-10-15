@@ -1,6 +1,8 @@
 package com.cyrus.zhihudaily.constants;
 
 /**
+ * 存放应用首选项的参数
+ * <p>
  * Created by Cyrus on 2016/10/9.
  */
 

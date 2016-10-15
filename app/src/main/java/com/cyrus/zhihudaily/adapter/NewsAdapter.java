@@ -1,5 +1,7 @@
 package com.cyrus.zhihudaily.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -10,8 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cyrus.zhihudaily.R;
+import com.cyrus.zhihudaily.activity.NewsDetailActivity;
+import com.cyrus.zhihudaily.constants.IntentConstant;
 import com.cyrus.zhihudaily.holder.CardHolder;
 import com.cyrus.zhihudaily.holder.HeaderHolder;
+import com.cyrus.zhihudaily.models.IntentStory;
 import com.cyrus.zhihudaily.models.NewsData;
 import com.cyrus.zhihudaily.models.Story;
 import com.cyrus.zhihudaily.models.TopStory;
@@ -44,6 +49,10 @@ public class NewsAdapter
      */
     private static final int TYPE_DAILY = 1;
 
+    /**
+     * 上下文
+     */
+    private Context mContext;
     /**
      * 新闻结构体
      */
@@ -88,7 +97,8 @@ public class NewsAdapter
      */
     private AutoTask mAutoTask;
 
-    public NewsAdapter(NewsData newsData) {
+    public NewsAdapter(Context context, NewsData newsData) {
+        mContext = context;
         mNewsData = newsData;
         mTopStories = mNewsData.getTop_stories();
         mStories = mNewsData.getStories();
@@ -114,7 +124,7 @@ public class NewsAdapter
             mHeaderPager = headerHolder.getViewPager();
             mIvsGuideSpots = headerHolder.getGuideSpots();
 
-            HeaderImageAdapter headerAdapter = new HeaderImageAdapter(mTopStories);
+            HeaderImageAdapter headerAdapter = new HeaderImageAdapter(mContext, mTopStories);
             mHeaderPager.setAdapter(headerAdapter);
             mHeaderPager.addOnPageChangeListener(this);
             mHeaderPager.setOnTouchListener(new View.OnTouchListener() {
@@ -140,7 +150,7 @@ public class NewsAdapter
             mIvTitle = cardHolder.getIvTitle();
             mTvTitle = cardHolder.getTvTitle();
 
-            Story story = mStories.get(position - 1);
+            final Story story = mStories.get(position - 1);
             /*
              * 是否显示日期
              */
@@ -166,7 +176,16 @@ public class NewsAdapter
             mCvItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO 设置卡片点击事件
+                    IntentStory intentStory = new IntentStory();
+
+                    intentStory.setId(story.getId());
+                    intentStory.setTitle(story.getTitle());
+                    ArrayList<String> images = story.getImages();
+                    intentStory.setImages(images);
+
+                    Intent intent = new Intent(UiUtils.getContext(), NewsDetailActivity.class);
+                    intent .putExtra(IntentConstant.INTENT_NEWS, intentStory);
+                    mContext.startActivity(intent);
                 }
             });
         }

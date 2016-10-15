@@ -1,5 +1,7 @@
 package com.cyrus.zhihudaily.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,10 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cyrus.zhihudaily.R;
+import com.cyrus.zhihudaily.activity.NewsDetailActivity;
+import com.cyrus.zhihudaily.constants.IntentConstant;
+import com.cyrus.zhihudaily.models.IntentStory;
 import com.cyrus.zhihudaily.models.TopStory;
 import com.cyrus.zhihudaily.utils.LoadImageUtils;
 import com.cyrus.zhihudaily.utils.UiUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,9 +28,11 @@ import java.util.List;
 public class HeaderImageAdapter extends PagerAdapter {
 
     private List<TopStory> mTopStories;
+    private Context mContext;
 
-    public HeaderImageAdapter(List<TopStory> topStories) {
+    public HeaderImageAdapter(Context context, List<TopStory> topStories) {
         mTopStories = topStories;
+        mContext = context;
     }
 
     @Override
@@ -38,7 +46,18 @@ public class HeaderImageAdapter extends PagerAdapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO 设置头条新闻点击事件
+                IntentStory intentStory = new IntentStory();
+                TopStory topStory = mTopStories.get(position);
+
+                intentStory.setId(topStory.getId());
+                intentStory.setTitle(topStory.getTitle());
+                ArrayList<String> images = new ArrayList<>();
+                images.add(topStory.getImage());
+                intentStory.setImages(images);
+
+                Intent intent = new Intent(UiUtils.getContext(), NewsDetailActivity.class);
+                intent .putExtra(IntentConstant.INTENT_NEWS, intentStory);
+                mContext.startActivity(intent);
             }
         });
         ImageView imageView = (ImageView) view.findViewById(R.id.iv_show);

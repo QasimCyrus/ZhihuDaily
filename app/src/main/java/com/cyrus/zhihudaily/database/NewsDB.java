@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
+ * 存放新闻的数据库
+ * <p>
  * Created by Cyrus on 2016/10/12.
  */
 
@@ -13,6 +15,7 @@ public class NewsDB {
     private static final String TABLE_NAME = "NewsTable";
     private static final String COLUMN_DATE = "date";
     private static final String COLUMN_JSON = "json";
+
     private DataBaseHelper mHelper;
 
     public NewsDB() {
@@ -69,7 +72,7 @@ public class NewsDB {
         SQLiteDatabase db = mHelper.getReadableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_JSON, json);
-        db.update(TABLE_NAME, contentValues, COLUMN_DATE+"=?", new String[]{date});
+        db.update(TABLE_NAME, contentValues, COLUMN_DATE + "=?", new String[]{date});
         db.close();
     }
 

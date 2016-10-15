@@ -75,7 +75,7 @@ public class NewsListFragment extends Fragment implements SwipeRefreshLayout.OnR
         mRvNews = (RecyclerView) view.findViewById(R.id.rv_news_list);
         mLlManager = new LinearLayoutManager(UiUtils.getContext());
         mRvNews.setLayoutManager(mLlManager);
-        mNewsAdapter = new NewsAdapter(mNewsData);
+        mNewsAdapter = new NewsAdapter(getContext(), mNewsData);
         mRvNews.setAdapter(mNewsAdapter);
         mSrlLoad.setOnRefreshListener(this);
         mRvNews.addOnScrollListener(new RecyclerView.OnScrollListener() {
