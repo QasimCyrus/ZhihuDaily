@@ -73,4 +73,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
+    public void setData(List<String> favorites) {
+        mFavorites = favorites;
+    }
 }
