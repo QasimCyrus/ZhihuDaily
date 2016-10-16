@@ -24,6 +24,7 @@ public class SplashActivity extends BaseActivity {
     private TextView mTvTitle;
     private SharedPreferences mSp;
 
+    private int mDurationTime;
     private boolean mIsFirstLoad;
 
     @Override
@@ -44,7 +45,7 @@ public class SplashActivity extends BaseActivity {
                 SplashActivity.this.startActivity(intent);
                 SplashActivity.this.finish();
             }
-        }, 3000);
+        }, mDurationTime);
     }
 
     private void getData() {
@@ -62,9 +63,11 @@ public class SplashActivity extends BaseActivity {
                 }
             });
 
+            mDurationTime = 3000;
             mIsFirstLoad = false;
             mSp.edit().putBoolean(FIRST_LOAD, mIsFirstLoad).apply();
         } else {
+            mDurationTime = 1500;
             setDefaultView();
         }
     }

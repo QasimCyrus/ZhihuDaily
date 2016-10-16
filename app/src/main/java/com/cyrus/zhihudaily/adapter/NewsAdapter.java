@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,10 +68,6 @@ public class NewsAdapter
     private List<Story> mStories;
 
     /**
-     * 记录已经加载过的数据日期
-     */
-    private String mLastDate;
-    /**
      * 判断当前大图是否轮播
      */
     private boolean mIsRecycle;
@@ -93,6 +90,7 @@ public class NewsAdapter
         mNewsData = newsData;
         mTopStories = mNewsData.getTop_stories();
         mStories = mNewsData.getStories();
+        mStories.add(0, null);
     }
 
     @Override
@@ -101,8 +99,8 @@ public class NewsAdapter
             return new HeaderHolder(View.inflate(parent.getContext(),
                     R.layout.item_top_picture, null));
         } else if (viewType == TYPE_DAILY) {
-            return new CardHolder(View.inflate(parent.getContext(),
-                    R.layout.item_daily_news, null));
+            return new CardHolder(LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_daily_news, parent, false));
         }
 
         return null;
@@ -143,42 +141,43 @@ public class NewsAdapter
 
             final Story story = mStories.get(position - 1);
             /*
-             * 是否显示日期
+             * 当前位置是否显示日期；
+             * 对象为null代表该位置的控件仅仅是用于显示时间轴而不显示卡片
              */
-            if (position == 1) {//position为0是头条，从position为1开始是每日新闻
+            if (position == 1) {//position为0是头条，从position为1开始是每日新闻，该位置为null
+                cvItem.setVisibility(GONE);
                 tvTime.setVisibility(VISIBLE);
                 tvTime.setText(R.string.news_list_today);
-                mLastDate = story.getDate();
             } else {
-                if (mLastDate.equals(story.getDate())) {
-                    tvTime.setVisibility(GONE);//跟参数mLastDate同个时间的新闻，不需要再显示日期
+                if (story != null) {
+                    tvTime.setVisibility(GONE);
+                    cvItem.setVisibility(VISIBLE);
+                    //设置卡片标题
+                    tvTitle.setText(story.getTitle());
+                    //设置卡片图片
+                    LoadImageUtils.loadImage(story.getImages().get(0), ivTitle);
+                    cvItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            IntentStory intentStory = new IntentStory();
+
+                            intentStory.setId(story.getId());
+                            intentStory.setTitle(story.getTitle());
+                            ArrayList<String> images = story.getImages();
+                            intentStory.setImages(images);
+
+                            Intent intent = new Intent(UiUtils.getContext(),
+                                    NewsDetailActivity.class);
+                            intent.putExtra(IntentConstant.INTENT_NEWS, intentStory);
+                            mContext.startActivity(intent);
+                        }
+                    });
                 } else {
-                    // 遇到第一个与mLastDate时间不同的item，则设置其时间可见，
-                    // 并把mLastDate设置成当前时间
+                    cvItem.setVisibility(GONE);
                     tvTime.setVisibility(VISIBLE);
-                    tvTime.setText(DateUtils.convertDate(story.getDate()));
-                    mLastDate = story.getDate();
+                    tvTime.setText(DateUtils.convertDate(mStories.get(position).getDate()));
                 }
             }
-            //设置卡片标题
-            tvTitle.setText(story.getTitle());
-            //设置卡片图片
-            LoadImageUtils.loadImage(story.getImages().get(0), ivTitle);
-            cvItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    IntentStory intentStory = new IntentStory();
-
-                    intentStory.setId(story.getId());
-                    intentStory.setTitle(story.getTitle());
-                    ArrayList<String> images = story.getImages();
-                    intentStory.setImages(images);
-
-                    Intent intent = new Intent(UiUtils.getContext(), NewsDetailActivity.class);
-                    intent .putExtra(IntentConstant.INTENT_NEWS, intentStory);
-                    mContext.startActivity(intent);
-                }
-            });
         }
     }
 
@@ -214,12 +213,16 @@ public class NewsAdapter
 
     public void addItem(ArrayList<Story> stories) {
         int beforeSize = mStories.size();
-        mStories.addAll(beforeSize, stories);
+        mStories.add(null);
+        mStories.addAll(beforeSize + 1, stories);
         notifyItemRangeInserted(beforeSize + 1, stories.size());
     }
 
     public void setNewsData(NewsData newsData) {
         mNewsData = newsData;
+        mTopStories = mNewsData.getTop_stories();
+        mStories = mNewsData.getStories();
+        mStories.add(0, null);
     }
 
     /**
