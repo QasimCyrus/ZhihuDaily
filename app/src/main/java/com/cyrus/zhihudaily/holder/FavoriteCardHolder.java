@@ -9,20 +9,24 @@ import android.widget.TextView;
 import com.cyrus.zhihudaily.R;
 
 /**
- * 显示新闻卡片的holder
+ * 收藏新闻条目的卡片holder
  * <p>
- * Created by Cyrus on 2016/10/14.
+ * Created by Cyrus on 2016/10/16.
  */
 
-public class CardHolder extends RecyclerView.ViewHolder {
+public class FavoriteCardHolder extends RecyclerView.ViewHolder{
 
     private CardView mCardView;
-    private TextView mTvTime;
     private TextView mTvTitle;
     private ImageView mIvTitle;
 
-    public TextView getTvTime() {
-        return mTvTime;
+    public FavoriteCardHolder(View itemView) {
+        super(itemView);
+
+        mCardView = (CardView) itemView.findViewById(R.id.cv_news_item);
+
+        mTvTitle = (TextView) itemView.findViewById(R.id.tv_title);
+        mIvTitle = (ImageView) itemView.findViewById(R.id.iv_title);
     }
 
     public TextView getTvTitle() {
@@ -35,16 +39,6 @@ public class CardHolder extends RecyclerView.ViewHolder {
 
     public CardView getCardView() {
         return mCardView;
-    }
-
-    public CardHolder(View itemView) {
-        super(itemView);
-
-        mCardView = (CardView) itemView.findViewById(R.id.cv_news_item);
-
-        mTvTime = (TextView) itemView.findViewById(R.id.tv_time);
-        mTvTitle = (TextView) itemView.findViewById(R.id.tv_title);
-        mIvTitle = (ImageView) itemView.findViewById(R.id.iv_title);
     }
 
 }

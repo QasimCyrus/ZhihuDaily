@@ -53,8 +53,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_favorite:
-                        //TODO 点击收藏菜单项的响应事件
-                        Intent intent = new Intent(MainActivity.this, NewsDetailActivity.class);
+                        Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
                         startActivity(intent);
                         return true;
                     case R.id.nav_about:

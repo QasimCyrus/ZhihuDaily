@@ -66,20 +66,6 @@ public class NewsAdapter
      */
     private List<Story> mStories;
 
-    /*
-     * 头条新闻界面的控件
-     */
-    private ViewPager mHeaderPager;
-    private ImageView mIvsGuideSpots[];
-
-    /*
-     * 每日新闻界面的控件
-     */
-    private CardView mCvItem;
-    private TextView mTvTime;
-    private ImageView mIvTitle;
-    private TextView mTvTitle;
-
     /**
      * 记录已经加载过的数据日期
      */
@@ -96,6 +82,11 @@ public class NewsAdapter
      * 控制自动轮播的任务
      */
     private AutoTask mAutoTask;
+    /*
+     * 头条新闻界面的控件
+     */
+    private ViewPager mHeaderPager;
+    private ImageView mIvsGuideSpots[];
 
     public NewsAdapter(Context context, NewsData newsData) {
         mContext = context;
@@ -111,7 +102,7 @@ public class NewsAdapter
                     R.layout.item_top_picture, null));
         } else if (viewType == TYPE_DAILY) {
             return new CardHolder(View.inflate(parent.getContext(),
-                    R.layout.item_news, null));
+                    R.layout.item_daily_news, null));
         }
 
         return null;
@@ -145,35 +136,35 @@ public class NewsAdapter
             mAutoTask.start();
         } else if (holder instanceof CardHolder) {
             CardHolder cardHolder = (CardHolder) holder;
-            mCvItem = cardHolder.getCardView();
-            mTvTime = cardHolder.getTvTime();
-            mIvTitle = cardHolder.getIvTitle();
-            mTvTitle = cardHolder.getTvTitle();
+            CardView cvItem = cardHolder.getCardView();
+            TextView tvTime = cardHolder.getTvTime();
+            ImageView ivTitle = cardHolder.getIvTitle();
+            TextView tvTitle = cardHolder.getTvTitle();
 
             final Story story = mStories.get(position - 1);
             /*
              * 是否显示日期
              */
             if (position == 1) {//position为0是头条，从position为1开始是每日新闻
-                mTvTime.setVisibility(VISIBLE);
-                mTvTime.setText(R.string.news_list_today);
+                tvTime.setVisibility(VISIBLE);
+                tvTime.setText(R.string.news_list_today);
                 mLastDate = story.getDate();
             } else {
                 if (mLastDate.equals(story.getDate())) {
-                    mTvTime.setVisibility(GONE);//跟参数mLastDate同个时间的新闻，不需要再显示日期
+                    tvTime.setVisibility(GONE);//跟参数mLastDate同个时间的新闻，不需要再显示日期
                 } else {
                     // 遇到第一个与mLastDate时间不同的item，则设置其时间可见，
                     // 并把mLastDate设置成当前时间
-                    mTvTime.setVisibility(VISIBLE);
-                    mTvTime.setText(DateUtils.convertDate(story.getDate()));
+                    tvTime.setVisibility(VISIBLE);
+                    tvTime.setText(DateUtils.convertDate(story.getDate()));
                     mLastDate = story.getDate();
                 }
             }
             //设置卡片标题
-            mTvTitle.setText(story.getTitle());
+            tvTitle.setText(story.getTitle());
             //设置卡片图片
-            LoadImageUtils.loadImage(story.getImages().get(0), mIvTitle);
-            mCvItem.setOnClickListener(new View.OnClickListener() {
+            LoadImageUtils.loadImage(story.getImages().get(0), ivTitle);
+            cvItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     IntentStory intentStory = new IntentStory();

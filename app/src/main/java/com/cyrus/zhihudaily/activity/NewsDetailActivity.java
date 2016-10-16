@@ -99,7 +99,8 @@ public class NewsDetailActivity extends AppCompatActivity {
         mIsFavorite = mFavDB.find(mNewsId);
 
         //工具栏设置
-        setSupportActionBar(mToolbar);//一定要放在前面，点击事件的响应才会生效
+        mToolbar.setTitle(intentStory.getTitle());//设置标题要放在setSupportActionBar之前
+        setSupportActionBar(mToolbar);//一定要放在响应点击事件前面，点击事件的响应才会生效
         mToolbar.setBackgroundColor(UiUtils.setColor(R.color.colorTransparentWhite));
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
