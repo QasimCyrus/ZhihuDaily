@@ -7,4 +7,11 @@
     <string name="drawer_close">关闭</string>
     <string name="toolbar_favorite">收藏</string>
     <string name="favorite_tip">快去看看有哪些值得收藏的新闻吧</string>
+    <string name="about_msg"> 简介：基于知乎日报API实现的客户端，目前实现的功能有：查看信息，对感兴趣的信息进行收藏。
+        \n\n 作者：Cyrus
+        \n\n GitHub主页：https://github.com/QasimCyrus
+        \n\n DEMO地址：https://github.com/QasimCyrus/ZhihuDaily
+        </string>
+    <string name="version">Version:1.0</string>
+    <string name="user_name">知乎用户</string>
 </resources>

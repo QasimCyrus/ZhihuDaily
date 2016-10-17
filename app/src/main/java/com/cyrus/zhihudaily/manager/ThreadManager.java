@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
  * Created by Cyrus on 2016/4/23.
  */
 public class ThreadManager {
-    private static ThreadManager instance = new ThreadManager();
+    private static final ThreadManager instance = new ThreadManager();
     private ThreadPoolProxy mThreadPoolLongProxy;//线程池数量多的线程代理
     private ThreadPoolProxy mThreadPoolShortProxy;//线程池数量少的线程代理
 

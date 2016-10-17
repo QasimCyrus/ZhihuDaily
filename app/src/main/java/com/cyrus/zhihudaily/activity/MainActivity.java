@@ -53,11 +53,10 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_favorite:
-                        Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
-                        startActivity(intent);
+                        startActivity(new Intent(MainActivity.this, FavoriteActivity.class));
                         return true;
                     case R.id.nav_about:
-                        //TODO 点击关于菜单项的响应事件
+                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
                         return true;
                 }
                 return false;
