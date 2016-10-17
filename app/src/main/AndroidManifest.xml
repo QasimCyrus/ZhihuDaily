@@ -23,7 +23,9 @@
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"/>
-        <activity android:name=".activity.NewsDetailActivity">
+        <activity
+            android:name=".activity.NewsDetailActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden">
         </activity>
         <activity android:name=".activity.FavoriteActivity">
         </activity>

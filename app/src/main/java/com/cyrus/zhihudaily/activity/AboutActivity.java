@@ -2,13 +2,13 @@ package com.cyrus.zhihudaily.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.cyrus.zhihudaily.BaseActivity;
 import com.cyrus.zhihudaily.R;
 
-public class AboutActivity extends AppCompatActivity {
+public class AboutActivity extends BaseActivity {
 
     private Toolbar mToolbar;
 

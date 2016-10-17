@@ -156,6 +156,7 @@ public class NewsAdapter
                     tvTitle.setText(story.getTitle());
                     //设置卡片图片
                     LoadImageUtils.loadImage(story.getImages().get(0), ivTitle);
+                    //设置卡片点击事件
                     cvItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

@@ -1,18 +1,21 @@
 package com.cyrus.zhihudaily.activity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
+import com.cyrus.zhihudaily.BaseActivity;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.constants.GlobalConstant;
 import com.cyrus.zhihudaily.constants.IntentConstant;
@@ -26,16 +29,17 @@ import com.cyrus.zhihudaily.utils.UiUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
-public class NewsDetailActivity extends AppCompatActivity {
+public class NewsDetailActivity extends BaseActivity {
+
+    private FavDB mFavDB;
 
     private Toolbar mToolbar;
-    private MenuItem mMenuItem;
     private ImageView mIvCover;
-    private FavDB mFavDB;
     private WebView mWvContent;
+    private ProgressBar mPbLoading;
+
     private boolean mIsFavorite;
     private String mNewsId;
-    private String mHtml;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,16 +79,28 @@ public class NewsDetailActivity extends AppCompatActivity {
             //设置手机端样式的html内容并加载
             String css = "<link rel=\"stylesheet\" " +
                     "href=\"file:///android_asset/style_light.css\" type=\"text/css\">";
-            mHtml = "<html><head>" + css + "</head></body>" +
+            String html = "<html><head>" + css + "</head></body>" +
                     netNewsData.getBody() + "</body></html>";
-            mHtml = mHtml.replace("<div class=\"img-place-holder\">", "");
-            mWvContent.loadDataWithBaseURL("x-data://base", mHtml, "text/html", "UTF-8", null);
+            html = html.replace("<div class=\"img-place-holder\">", "");
+            mWvContent.loadDataWithBaseURL("x-data://base", html, "text/html", "UTF-8", null);
 
             mWvContent.setWebViewClient(new WebViewClient() {
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                     //设置为true，链接会在WebView中打开，设为false会在第三方浏览器打开
                     return true;
+                }
+            });
+            mWvContent.setWebChromeClient(new WebChromeClient(){
+                @Override
+                public void onProgressChanged(WebView view, int newProgress) {
+                    //进度条加载
+                    if (newProgress == 100) {
+                        mPbLoading.setVisibility(View.GONE);
+                    } else {
+                        mPbLoading.setVisibility(View.VISIBLE);
+                        mPbLoading.setProgress(newProgress);
+                    }
                 }
             });
         }
@@ -152,7 +168,6 @@ public class NewsDetailActivity extends AppCompatActivity {
 //            jsonObject.put("title", intentStory.getTitle());
 //            jsonObject.put("images", intentStory.getImages());
 //
-//            Log.d("hello", jsonObject.toString());
 //            return jsonObject.toString();
 //        } catch (JSONException e) {
 //            e.printStackTrace();
@@ -160,6 +175,7 @@ public class NewsDetailActivity extends AppCompatActivity {
 //        }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private void initWebView() {
         WebSettings webSettings = mWvContent.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -173,15 +189,16 @@ public class NewsDetailActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar_detail);
         mIvCover = (ImageView) findViewById(R.id.iv_cover);
         mWvContent = (WebView) findViewById(R.id.wv_content);
+        mPbLoading = (ProgressBar) findViewById(R.id.pb_loading_detail);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_favorite, menu);
-        mMenuItem = menu.findItem(R.id.btn_favorite);
+        MenuItem menuItem = menu.findItem(R.id.btn_favorite);
 
         if (mIsFavorite) {
-            mMenuItem.setIcon(R.drawable.favorite_pressed);
+            menuItem.setIcon(R.drawable.favorite_pressed);
         }
 
         return true;
@@ -192,7 +209,7 @@ public class NewsDetailActivity extends AppCompatActivity {
         if (mWvContent.canGoBack()) {
             mWvContent.goBack();
         } else {
-            finish();
+            super.onBackPressed();
         }
     }
 
