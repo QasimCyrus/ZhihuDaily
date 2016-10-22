@@ -1,5 +1,9 @@
 package com.cyrus.zhihudaily.utils;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import java.io.IOException;
 
 import okhttp3.OkHttpClient;
@@ -33,6 +37,18 @@ public class NetUtils {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * 判断当前网络是否已连接
+     *
+     * @return 已连接返回true，未连接或正在连接返回false
+     */
+    public static boolean isNetConnected() {
+        ConnectivityManager manager = (ConnectivityManager) UiUtils.getContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        return info != null && info.isConnected();
     }
 
 }

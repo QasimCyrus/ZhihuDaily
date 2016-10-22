@@ -88,6 +88,15 @@ public class NewsDB {
     }
 
     /**
+     * 删除数据库中所有数据
+     */
+    public void deleteAll() {
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        db.delete(TABLE_NAME, null, null);
+        db.close();
+    }
+
+    /**
      * 是否存在某一天的数据
      *
      * @param date 要查询的日期

@@ -2,6 +2,8 @@ package com.cyrus.zhihudaily.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.activity.NewsDetailActivity;
 import com.cyrus.zhihudaily.constants.IntentConstant;
+import com.cyrus.zhihudaily.constants.SharePreferenceConstant;
 import com.cyrus.zhihudaily.holder.CardHolder;
 import com.cyrus.zhihudaily.holder.HeaderHolder;
 import com.cyrus.zhihudaily.models.IntentStory;
@@ -79,6 +82,10 @@ public class NewsAdapter
      * 控制自动轮播的任务
      */
     private AutoTask mAutoTask;
+    /**
+     * 新闻首选项
+     */
+    private SharedPreferences mNewsSp;
     /*
      * 头条新闻界面的控件
      */
@@ -91,6 +98,8 @@ public class NewsAdapter
         mTopStories = mNewsData.getTop_stories();
         mStories = mNewsData.getStories();
         mStories.add(0, null);
+        mNewsSp = UiUtils.getContext().getSharedPreferences(SharePreferenceConstant
+                .NEWS_PREFERENCE_NAME, Context.MODE_PRIVATE);
     }
 
     @Override
@@ -137,7 +146,7 @@ public class NewsAdapter
             CardView cvItem = cardHolder.getCardView();
             TextView tvTime = cardHolder.getTvTime();
             ImageView ivTitle = cardHolder.getIvTitle();
-            TextView tvTitle = cardHolder.getTvTitle();
+            final TextView tvTitle = cardHolder.getTvTitle();
 
             final Story story = mStories.get(position - 1);
             /*
@@ -154,12 +163,17 @@ public class NewsAdapter
                     cvItem.setVisibility(VISIBLE);
                     //设置卡片标题
                     tvTitle.setText(story.getTitle());
+                    tvTitle.setTextColor(mNewsSp.getBoolean(story.getId(), false)
+                            ? Color.GRAY : Color.BLACK);//已点击过则显示灰色，未点击显示黑色
                     //设置卡片图片
                     LoadImageUtils.loadImage(story.getImages().get(0), ivTitle);
                     //设置卡片点击事件
                     cvItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            tvTitle.setTextColor(Color.GRAY);
+                            mNewsSp.edit().putBoolean(story.getId(), true).apply();//记录已点击
+
                             IntentStory intentStory = new IntentStory();
 
                             intentStory.setId(story.getId());

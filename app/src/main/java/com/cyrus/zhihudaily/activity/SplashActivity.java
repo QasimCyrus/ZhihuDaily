@@ -16,7 +16,7 @@ import com.cyrus.zhihudaily.utils.LoadImageUtils;
 import com.cyrus.zhihudaily.utils.NetUtils;
 import com.google.gson.Gson;
 
-import static com.cyrus.zhihudaily.constants.SharePreferenceConstant.FIRST_LOAD;
+import static com.cyrus.zhihudaily.constants.SharePreferenceConstant.FIRST_LAUNCH;
 
 public class SplashActivity extends BaseActivity {
 
@@ -33,7 +33,7 @@ public class SplashActivity extends BaseActivity {
         setContentView(R.layout.activity_splash);
 
         mSp = getBaseApplication().getSp();
-        mIsFirstLoad = mSp.getBoolean(FIRST_LOAD, true);
+        mIsFirstLoad = mSp.getBoolean(FIRST_LAUNCH, true);
 
         initView();
         getData();
@@ -65,7 +65,7 @@ public class SplashActivity extends BaseActivity {
 
             mDurationTime = 3000;
             mIsFirstLoad = false;
-            mSp.edit().putBoolean(FIRST_LOAD, mIsFirstLoad).apply();
+            mSp.edit().putBoolean(FIRST_LAUNCH, mIsFirstLoad).apply();
         } else {
             mDurationTime = 1500;
             setDefaultView();

@@ -2,6 +2,7 @@ package com.cyrus.zhihudaily.activity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -19,6 +20,7 @@ import com.cyrus.zhihudaily.BaseActivity;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.constants.GlobalConstant;
 import com.cyrus.zhihudaily.constants.IntentConstant;
+import com.cyrus.zhihudaily.database.DetailDB;
 import com.cyrus.zhihudaily.database.FavDB;
 import com.cyrus.zhihudaily.manager.ThreadManager;
 import com.cyrus.zhihudaily.models.IntentStory;
@@ -32,6 +34,7 @@ import com.google.gson.JsonElement;
 public class NewsDetailActivity extends BaseActivity {
 
     private FavDB mFavDB;
+    private DetailDB mDetailDB;
 
     private Toolbar mToolbar;
     private ImageView mIvCover;
@@ -40,6 +43,7 @@ public class NewsDetailActivity extends BaseActivity {
 
     private boolean mIsFavorite;
     private String mNewsId;
+    private String mDetailJson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,19 +57,30 @@ public class NewsDetailActivity extends BaseActivity {
     }
 
     private void loadNews() {
-        ThreadManager.getInstance().createLongPool().execute(new Runnable() {
-            @Override
-            public void run() {
-                String url = GlobalConstant.DETAIL_URL + mNewsId;
-                final String result = NetUtils.load(url);
-                UiUtils.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadWeb(result);
-                    }
-                });
+        if (!NetUtils.isNetConnected()) {
+            if (mDetailJson != null) {
+                loadWeb(mDetailJson);
+            } else {
+                Snackbar.make(mWvContent, "无网络连接", Snackbar.LENGTH_SHORT).show();
             }
-        });
+        } else {
+            ThreadManager.getInstance().createLongPool().execute(new Runnable() {
+                @Override
+                public void run() {
+                    String url = GlobalConstant.DETAIL_URL + mNewsId;
+                    final String result = NetUtils.load(url);
+                    mDetailDB.insert(mNewsId, result);
+
+                    UiUtils.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadWeb(result);
+                        }
+                    });
+                }
+            });
+        }
+
     }
 
     private void loadWeb(String result) {
@@ -91,7 +106,7 @@ public class NewsDetailActivity extends BaseActivity {
                     return true;
                 }
             });
-            mWvContent.setWebChromeClient(new WebChromeClient(){
+            mWvContent.setWebChromeClient(new WebChromeClient() {
                 @Override
                 public void onProgressChanged(WebView view, int newProgress) {
                     //进度条加载
@@ -107,12 +122,15 @@ public class NewsDetailActivity extends BaseActivity {
     }
 
     private void initData() {
-        //当前新闻是否已收藏
+        //当前新闻是否已收藏以及是否存有html内容
         mFavDB = new FavDB();
+        mDetailDB = new DetailDB();
+
         final IntentStory intentStory = (IntentStory) getIntent()
                 .getSerializableExtra(IntentConstant.INTENT_NEWS);
         mNewsId = intentStory.getId();
         mIsFavorite = mFavDB.find(mNewsId);
+        mDetailJson = mDetailDB.find(mNewsId);
 
         //工具栏设置
         mToolbar.setTitle(intentStory.getTitle());//设置标题要放在setSupportActionBar之前

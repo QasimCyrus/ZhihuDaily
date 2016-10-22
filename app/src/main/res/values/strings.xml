@@ -14,4 +14,9 @@
         </string>
     <string name="version">Version:1.0</string>
     <string name="user_name">知乎用户</string>
+    <string name="navigation_favorite">我的收藏</string>
+    <string name="navigation_about">关于</string>
+    <string name="navigation_clear_cache">清除缓存</string>
+    <string name="navigation_version">版本</string>
+    <string name="navigation_version_code">1.0</string>
 </resources>

@@ -20,7 +20,7 @@ class DataBaseHelper extends SQLiteOpenHelper {
     /**
      * 当前数据库版本
      */
-    private static final int VERSION = 2;
+    private static final int VERSION = 3;
     /**
      * 创建新闻条目的数据库
      */
@@ -38,6 +38,12 @@ class DataBaseHelper extends SQLiteOpenHelper {
                     FavoriteTable.COLUMN_NEWS_ID + " text," +
                     FavoriteTable.COLUMN_JSON + " text)";
 
+    private static final String CREATE_DETAIL_TABLE =
+            "create table " + DetailTable.DETAIL_TABLE_NAME + "(" +
+                    DetailTable.COLUMN_ID + " integer primary key autoincrement," +
+                    DetailTable.COLUMN_NEWS_ID + " text," +
+                    DetailTable.COLUMN_JSON + " text)";
+
     DataBaseHelper() {
         super(UiUtils.getContext(), DB_NAME, null, VERSION);
     }
@@ -46,6 +52,7 @@ class DataBaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_NEWS_TABLE);
         db.execSQL(CREATE_FAVORITE_TABLE);
+        db.execSQL(CREATE_DETAIL_TABLE);
     }
 
     @Override
@@ -53,6 +60,9 @@ class DataBaseHelper extends SQLiteOpenHelper {
         switch (newVersion) {
             case 2://添加收藏条目的数据库
                 db.execSQL(CREATE_FAVORITE_TABLE);
+                break;
+            case 3://添加新闻详情页文字缓存
+                db.execSQL(CREATE_DETAIL_TABLE);
                 break;
         }
     }
@@ -66,6 +76,13 @@ class DataBaseHelper extends SQLiteOpenHelper {
 
     private class FavoriteTable {
         private static final String FAVORITE_TABLE_NAME = "FavoriteTable";
+        private static final String COLUMN_ID = "_id";
+        private static final String COLUMN_NEWS_ID = "id";
+        private static final String COLUMN_JSON = "json";
+    }
+
+    private class DetailTable {
+        private static final String DETAIL_TABLE_NAME = "DetailTable";
         private static final String COLUMN_ID = "_id";
         private static final String COLUMN_NEWS_ID = "id";
         private static final String COLUMN_JSON = "json";

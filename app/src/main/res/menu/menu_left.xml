@@ -5,15 +5,18 @@
         <item
             android:id="@+id/nav_favorite"
             android:icon="@drawable/favorite_pressed"
-            android:title="我的收藏"/>
+            android:title="@string/navigation_favorite"/>
+        <item
+            android:id="@+id/nav_clear"
+            android:title="@string/navigation_clear_cache"/>
         <item
             android:id="@+id/nav_about"
-            android:title="关于"/>
+            android:title="@string/navigation_about"/>
     </group>
 
-    <item android:title="版本">
+    <item android:title="@string/navigation_version">
         <menu>
-            <item android:title="1.0.0"/>
+            <item android:title="@string/navigation_version_code"/>
         </menu>
     </item>
 
