@@ -12,9 +12,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class NewsDB {
 
-    private static final String TABLE_NAME = "NewsTable";
-    private static final String COLUMN_DATE = "date";
-    private static final String COLUMN_JSON = "json";
+    private static final String TABLE_NAME = DataBaseHelper.NewsTable.NEWS_TABLE_NAME;
+    private static final String COLUMN_DATE = DataBaseHelper.NewsTable.COLUMN_DATE;
+    private static final String COLUMN_JSON = DataBaseHelper.NewsTable.COLUMN_JSON;
 
     private DataBaseHelper mHelper;
 
@@ -23,7 +23,7 @@ public class NewsDB {
     }
 
     /**
-     * 查找数据库中的json数据
+     * 查找数据库中某天的json数据
      *
      * @param date 要找的数据的日期
      * @return 查找到的json结果，如果找不到则返回null

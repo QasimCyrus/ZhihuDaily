@@ -20,7 +20,7 @@ class DataBaseHelper extends SQLiteOpenHelper {
     /**
      * 当前数据库版本
      */
-    private static final int VERSION = 3;
+    private static final int VERSION = 4;
     /**
      * 创建新闻条目的数据库
      */
@@ -37,12 +37,22 @@ class DataBaseHelper extends SQLiteOpenHelper {
                     FavoriteTable.COLUMN_ID + " integer primary key autoincrement," +
                     FavoriteTable.COLUMN_NEWS_ID + " text," +
                     FavoriteTable.COLUMN_JSON + " text)";
-
+    /**
+     * 创建详细新闻的数据库
+     */
     private static final String CREATE_DETAIL_TABLE =
             "create table " + DetailTable.DETAIL_TABLE_NAME + "(" +
                     DetailTable.COLUMN_ID + " integer primary key autoincrement," +
                     DetailTable.COLUMN_NEWS_ID + " text," +
                     DetailTable.COLUMN_JSON + " text)";
+    /**
+     * 创建主题新闻的数据库
+     */
+    private static final String CREATE_THEME_TABLE =
+            "create table " + ThemeNewsTable.THEME_TABLE_NAME + "(" +
+                    ThemeNewsTable.COLUMN_ID + " integer primary key autoincrement," +
+                    ThemeNewsTable.COLUMN_THEME_ID + " text," +
+                    ThemeNewsTable.COLUMN_JSON + " text)";
 
     DataBaseHelper() {
         super(UiUtils.getContext(), DB_NAME, null, VERSION);
@@ -53,6 +63,7 @@ class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_NEWS_TABLE);
         db.execSQL(CREATE_FAVORITE_TABLE);
         db.execSQL(CREATE_DETAIL_TABLE);
+        db.execSQL(CREATE_THEME_TABLE);
     }
 
     @Override
@@ -61,30 +72,41 @@ class DataBaseHelper extends SQLiteOpenHelper {
             case 2://添加收藏条目的数据库
                 db.execSQL(CREATE_FAVORITE_TABLE);
                 break;
-            case 3://添加新闻详情页文字缓存
+            case 3://添加新闻详情页文字缓存的数据库
                 db.execSQL(CREATE_DETAIL_TABLE);
+                break;
+            case 4://添加主题新闻缓存的数据库
+                db.execSQL(CREATE_THEME_TABLE);
                 break;
         }
     }
 
-    private class NewsTable {
-        private static final String NEWS_TABLE_NAME = "NewsTable";
-        private static final String COLUMN_ID = "_id";
-        private static final String COLUMN_DATE = "date";
-        private static final String COLUMN_JSON = "json";
+    class NewsTable {
+        static final String NEWS_TABLE_NAME = "NewsTable";
+        static final String COLUMN_ID = "_id";
+        static final String COLUMN_DATE = "date";
+        static final String COLUMN_JSON = "json";
     }
 
-    private class FavoriteTable {
-        private static final String FAVORITE_TABLE_NAME = "FavoriteTable";
-        private static final String COLUMN_ID = "_id";
-        private static final String COLUMN_NEWS_ID = "id";
-        private static final String COLUMN_JSON = "json";
+    class FavoriteTable {
+        static final String FAVORITE_TABLE_NAME = "FavoriteTable";
+        static final String COLUMN_ID = "_id";
+        static final String COLUMN_NEWS_ID = "id";
+        static final String COLUMN_JSON = "json";
     }
 
-    private class DetailTable {
-        private static final String DETAIL_TABLE_NAME = "DetailTable";
-        private static final String COLUMN_ID = "_id";
-        private static final String COLUMN_NEWS_ID = "id";
-        private static final String COLUMN_JSON = "json";
+    class DetailTable {
+        static final String DETAIL_TABLE_NAME = "DetailTable";
+        static final String COLUMN_ID = "_id";
+        static final String COLUMN_NEWS_ID = "id";
+        static final String COLUMN_JSON = "json";
     }
+
+    class ThemeNewsTable {
+        static final String THEME_TABLE_NAME = "ThemeTable";
+        static final String COLUMN_ID = "_id";
+        static final String COLUMN_THEME_ID = "theme";
+        static final String COLUMN_JSON = "json";
+    }
+
 }

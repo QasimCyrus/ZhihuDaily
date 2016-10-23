@@ -16,12 +16,12 @@ import android.widget.TextView;
 
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.activity.NewsDetailActivity;
-import com.cyrus.zhihudaily.constants.IntentConstant;
+import com.cyrus.zhihudaily.constants.DataConstant;
 import com.cyrus.zhihudaily.constants.SharePreferenceConstant;
 import com.cyrus.zhihudaily.holder.CardHolder;
 import com.cyrus.zhihudaily.holder.HeaderHolder;
 import com.cyrus.zhihudaily.models.IntentStory;
-import com.cyrus.zhihudaily.models.NewsData;
+import com.cyrus.zhihudaily.models.LatestNewsData;
 import com.cyrus.zhihudaily.models.Story;
 import com.cyrus.zhihudaily.models.TopStory;
 import com.cyrus.zhihudaily.utils.DateUtils;
@@ -60,7 +60,7 @@ public class NewsAdapter
     /**
      * 新闻结构体
      */
-    private NewsData mNewsData;
+    private LatestNewsData mNewsData;
     /**
      * 头条新闻列表
      */
@@ -92,7 +92,7 @@ public class NewsAdapter
     private ViewPager mHeaderPager;
     private ImageView mIvsGuideSpots[];
 
-    public NewsAdapter(Context context, NewsData newsData) {
+    public NewsAdapter(Context context, LatestNewsData newsData) {
         mContext = context;
         mNewsData = newsData;
         mTopStories = mNewsData.getTop_stories();
@@ -183,7 +183,7 @@ public class NewsAdapter
 
                             Intent intent = new Intent(UiUtils.getContext(),
                                     NewsDetailActivity.class);
-                            intent.putExtra(IntentConstant.INTENT_NEWS, intentStory);
+                            intent.putExtra(DataConstant.INTENT_NEWS, intentStory);
                             mContext.startActivity(intent);
                         }
                     });
@@ -233,7 +233,7 @@ public class NewsAdapter
         notifyItemRangeInserted(beforeSize + 1, stories.size());
     }
 
-    public void setNewsData(NewsData newsData) {
+    public void setNewsData(LatestNewsData newsData) {
         mNewsData = newsData;
         mTopStories = mNewsData.getTop_stories();
         mStories = mNewsData.getStories();

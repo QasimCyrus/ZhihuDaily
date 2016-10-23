@@ -25,16 +25,20 @@ public class NetUtils {
      * @return 解析到的String类型数据
      */
     public static String load(String url) {
-        Request request = new Request.Builder().url(url).build();
-        try {
-            Response response = mOkHttpClient.newCall(request).execute();
-            if (response.isSuccessful()) {
-                return response.body().string();
-            } else {
+        if (isNetConnectedOrConnecting()) {
+            Request request = new Request.Builder().url(url).build();
+            try {
+                Response response = mOkHttpClient.newCall(request).execute();
+                if (response.isSuccessful()) {
+                    return response.body().string();
+                } else {
+                    return null;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
                 return null;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
             return null;
         }
     }
@@ -44,11 +48,11 @@ public class NetUtils {
      *
      * @return 已连接返回true，未连接或正在连接返回false
      */
-    public static boolean isNetConnected() {
+    public static boolean isNetConnectedOrConnecting() {
         ConnectivityManager manager = (ConnectivityManager) UiUtils.getContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = manager.getActiveNetworkInfo();
-        return info != null && info.isConnected();
+        return info != null && info.isConnectedOrConnecting();
     }
 
 }

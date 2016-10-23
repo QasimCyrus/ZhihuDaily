@@ -7,16 +7,35 @@
     <string name="drawer_close">关闭</string>
     <string name="toolbar_favorite">收藏</string>
     <string name="favorite_tip">快去看看有哪些值得收藏的新闻吧</string>
-    <string name="about_msg"> 简介：基于知乎日报API实现的客户端，目前实现的功能有：查看信息，对感兴趣的信息进行收藏。
+    <string name="about_msg"> 简介：基于知乎日报API实现的客户端，目前实现的功能有：
+        新闻列表和详细内容的查看与缓存，可对感兴趣的新闻进行收藏，以及不同主题的分类查看。
         \n\n 作者：Cyrus
         \n\n GitHub主页：https://github.com/QasimCyrus
         \n\n DEMO地址：https://github.com/QasimCyrus/ZhihuDaily
         </string>
-    <string name="version">Version:1.0</string>
+    <string name="version">Version:1.1</string>
     <string name="user_name">知乎用户</string>
     <string name="navigation_favorite">我的收藏</string>
     <string name="navigation_about">关于</string>
     <string name="navigation_clear_cache">清除缓存</string>
     <string name="navigation_version">版本</string>
     <string name="navigation_version_code">1.0</string>
+    <string name="search">搜索</string>
+    <string name="clear_search">清除</string>
+    <string name="navigation_home">主页</string>
+    <string name="navigation_category">分类</string>
+    <string name="navigation_psychology">日常心理学</string>
+    <string name="navigation_recommend">用户推荐日报</string>
+    <string name="navigation_movie">电影日报</string>
+    <string name="navigation_not_boring">不许无聊</string>
+    <string name="navigation_design">设计日报</string>
+    <string name="navigation_company">大公司日报</string>
+    <string name="navigation_finance">财经日报</string>
+    <string name="navigation_internet">互联网安全</string>
+    <string name="navigation_game">开始游戏</string>
+    <string name="navigation_music">音乐日报</string>
+    <string name="navigation_comic">动漫日报</string>
+    <string name="navigation_sport">体育日报</string>
+    <string name="info_internet_disconnected">无网络连接</string>
+
 </resources>

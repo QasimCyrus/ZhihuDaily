@@ -18,10 +18,10 @@ import android.widget.ProgressBar;
 
 import com.cyrus.zhihudaily.BaseActivity;
 import com.cyrus.zhihudaily.R;
+import com.cyrus.zhihudaily.constants.DataConstant;
 import com.cyrus.zhihudaily.constants.GlobalConstant;
-import com.cyrus.zhihudaily.constants.IntentConstant;
-import com.cyrus.zhihudaily.database.DetailDB;
-import com.cyrus.zhihudaily.database.FavDB;
+import com.cyrus.zhihudaily.database.FavoriteNewsDB;
+import com.cyrus.zhihudaily.database.NewsDetailDB;
 import com.cyrus.zhihudaily.manager.ThreadManager;
 import com.cyrus.zhihudaily.models.IntentStory;
 import com.cyrus.zhihudaily.models.NetNewsData;
@@ -33,8 +33,8 @@ import com.google.gson.JsonElement;
 
 public class NewsDetailActivity extends BaseActivity {
 
-    private FavDB mFavDB;
-    private DetailDB mDetailDB;
+    private FavoriteNewsDB mFavDB;
+    private NewsDetailDB mDetailDB;
 
     private Toolbar mToolbar;
     private ImageView mIvCover;
@@ -57,11 +57,12 @@ public class NewsDetailActivity extends BaseActivity {
     }
 
     private void loadNews() {
-        if (!NetUtils.isNetConnected()) {
+        if (!NetUtils.isNetConnectedOrConnecting()) {
             if (mDetailJson != null) {
                 loadWeb(mDetailJson);
             } else {
-                Snackbar.make(mWvContent, "无网络连接", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(mWvContent, R.string.info_internet_disconnected,
+                        Snackbar.LENGTH_SHORT).show();
             }
         } else {
             ThreadManager.getInstance().createLongPool().execute(new Runnable() {
@@ -92,12 +93,21 @@ public class NewsDetailActivity extends BaseActivity {
             LoadImageUtils.loadImage(netNewsData.getImage(), mIvCover);
 
             //设置手机端样式的html内容并加载
-            String css = "<link rel=\"stylesheet\" " +
-                    "href=\"file:///android_asset/style_light.css\" type=\"text/css\">";
-            String html = "<html><head>" + css + "</head></body>" +
-                    netNewsData.getBody() + "</body></html>";
-            html = html.replace("<div class=\"img-place-holder\">", "");
-            mWvContent.loadDataWithBaseURL("x-data://base", html, "text/html", "UTF-8", null);
+            if (netNewsData.getBody() == null) {
+                if (NetUtils.isNetConnectedOrConnecting()) {
+                    mWvContent.loadUrl(netNewsData.getShareUrl());
+                } else {
+                    Snackbar.make(mWvContent, R.string.info_internet_disconnected,
+                            Snackbar.LENGTH_SHORT).show();
+                }
+            } else {
+                String css = "<link rel=\"stylesheet\" " +
+                        "href=\"file:///android_asset/style_light.css\" type=\"text/css\">";
+                String html = "<html><head>" + css + "</head></body>" +
+                        netNewsData.getBody() + "</body></html>";
+                html = html.replace("<div class=\"img-place-holder\">", "");
+                mWvContent.loadDataWithBaseURL("x-data://base", html, "text/html", "UTF-8", null);
+            }
 
             mWvContent.setWebViewClient(new WebViewClient() {
                 @Override
@@ -123,11 +133,11 @@ public class NewsDetailActivity extends BaseActivity {
 
     private void initData() {
         //当前新闻是否已收藏以及是否存有html内容
-        mFavDB = new FavDB();
-        mDetailDB = new DetailDB();
+        mFavDB = new FavoriteNewsDB();
+        mDetailDB = new NewsDetailDB();
 
         final IntentStory intentStory = (IntentStory) getIntent()
-                .getSerializableExtra(IntentConstant.INTENT_NEWS);
+                .getSerializableExtra(DataConstant.INTENT_NEWS);
         mNewsId = intentStory.getId();
         mIsFavorite = mFavDB.find(mNewsId);
         mDetailJson = mDetailDB.find(mNewsId);

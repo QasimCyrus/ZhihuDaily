@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.cyrus.zhihudaily.BaseActivity;
 import com.cyrus.zhihudaily.R;
-import com.cyrus.zhihudaily.adapter.FavoritesAdapter;
-import com.cyrus.zhihudaily.database.FavDB;
+import com.cyrus.zhihudaily.adapter.IntentStoryAdapter;
+import com.cyrus.zhihudaily.database.FavoriteNewsDB;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class FavoriteActivity extends BaseActivity {
     private Toolbar mToolbar;
     private RecyclerView mRvFavorites;
     private TextView mTvTip;
-    private FavoritesAdapter mAdapter;
+    private IntentStoryAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +58,14 @@ public class FavoriteActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
-        setData();
+        setData();//在显示界面的时候都要刷新数据显示
     }
 
     /**
      * RecyclerView的配置和数据设置
      */
     private void setData() {
-        FavDB favDB = new FavDB();
+        FavoriteNewsDB favDB = new FavoriteNewsDB();
         List<String> favorites = favDB.listAll();
         if (favorites != null) {
             if (favorites.size() != 0) {
@@ -73,12 +73,11 @@ public class FavoriteActivity extends BaseActivity {
                 mTvTip.setVisibility(GONE);
 
                 if (mAdapter == null) {
-                    mAdapter = new FavoritesAdapter(this, favorites);
+                    mAdapter = new IntentStoryAdapter(this, favorites);
                     mRvFavorites.setLayoutManager(new LinearLayoutManager(this));
                     mRvFavorites.setAdapter(mAdapter);
                 } else {
-                    mAdapter.setData(favorites);
-                    mAdapter.notifyDataSetChanged();
+                    mAdapter.setDataAndNotify(favorites);
                 }
             }else {
                 mRvFavorites.setVisibility(GONE);

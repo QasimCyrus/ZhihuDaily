@@ -3,9 +3,11 @@ package com.cyrus.zhihudaily.models;
 import java.util.ArrayList;
 
 /**
- * Created by weics on 2016/4/25.
+ * 每日新闻结构体，包括了日期，头条和其他新闻
+ * <p>
+ * Created by Cyrus on 2016/4/25.
  */
-public class NewsData {
+public class LatestNewsData {
     private String date;
     private ArrayList<Story> stories;
     private ArrayList<TopStory> top_stories;

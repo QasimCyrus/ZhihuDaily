@@ -10,15 +10,15 @@ import android.database.sqlite.SQLiteDatabase;
  * Created by Cyrus on 2016/10/22.
  */
 
-public class DetailDB {
+public class NewsDetailDB {
 
-    private static final String DETAIL_TABLE_NAME = "DetailTable";
-    private static final String COLUMN_NEWS_ID = "id";
-    private static final String COLUMN_JSON = "json";
+    private static final String DETAIL_TABLE_NAME = DataBaseHelper.DetailTable.DETAIL_TABLE_NAME;
+    private static final String COLUMN_NEWS_ID = DataBaseHelper.DetailTable.COLUMN_NEWS_ID;
+    private static final String COLUMN_JSON = DataBaseHelper.DetailTable.COLUMN_JSON;
 
     private DataBaseHelper mHelper;
 
-    public DetailDB() {
+    public NewsDetailDB() {
         mHelper = new DataBaseHelper();
     }
 

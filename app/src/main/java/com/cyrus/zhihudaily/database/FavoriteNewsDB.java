@@ -13,15 +13,15 @@ import java.util.List;
  * Created by Cyrus on 2016/10/15.
  */
 
-public class FavDB {
+public class FavoriteNewsDB {
 
-    private static final String TABLE_NAME = "FavoriteTable";
-    private static final String COLUMN_NEWS_ID = "id";
-    private static final String COLUMN_JSON = "json";
+    private static final String TABLE_NAME = DataBaseHelper.FavoriteTable.FAVORITE_TABLE_NAME;
+    private static final String COLUMN_NEWS_ID = DataBaseHelper.FavoriteTable.COLUMN_NEWS_ID;
+    private static final String COLUMN_JSON = DataBaseHelper.FavoriteTable.COLUMN_JSON;
 
     private DataBaseHelper mHelper;
 
-    public FavDB() {
+    public FavoriteNewsDB() {
         mHelper = new DataBaseHelper();
     }
 

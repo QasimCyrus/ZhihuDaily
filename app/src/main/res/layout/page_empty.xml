@@ -16,6 +16,7 @@
         android:padding="12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
         android:text="服务器正在努力"/>
 
     <Button

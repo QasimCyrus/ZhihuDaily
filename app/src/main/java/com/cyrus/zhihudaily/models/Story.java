@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * 消息标题的数据类型
  * <p>
- * Created by Curus on 2016/5/2.
+ * Created by Cyrus on 2016/5/2.
  */
 public class Story implements Serializable {
 
@@ -83,6 +83,5 @@ public class Story implements Serializable {
                 ", mImages=" + mImages +
                 '}';
     }
-
 
 }

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.activity.NewsDetailActivity;
-import com.cyrus.zhihudaily.constants.IntentConstant;
+import com.cyrus.zhihudaily.constants.DataConstant;
 import com.cyrus.zhihudaily.models.IntentStory;
 import com.cyrus.zhihudaily.models.TopStory;
 import com.cyrus.zhihudaily.utils.LoadImageUtils;
@@ -56,7 +56,7 @@ public class HeaderImageAdapter extends PagerAdapter {
                 intentStory.setImages(images);
 
                 Intent intent = new Intent(UiUtils.getContext(), NewsDetailActivity.class);
-                intent .putExtra(IntentConstant.INTENT_NEWS, intentStory);
+                intent .putExtra(DataConstant.INTENT_NEWS, intentStory);
                 mContext.startActivity(intent);
             }
         });
