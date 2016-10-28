@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,8 +18,8 @@ import com.cyrus.zhihudaily.BaseActivity;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.constants.DataConstant;
 import com.cyrus.zhihudaily.constants.SharePreferenceConstant;
-import com.cyrus.zhihudaily.database.NewsDetailDB;
 import com.cyrus.zhihudaily.database.NewsDB;
+import com.cyrus.zhihudaily.database.NewsDetailDB;
 import com.cyrus.zhihudaily.database.ThemeNewsDB;
 import com.cyrus.zhihudaily.fragment.CategoryNewsFragment;
 import com.cyrus.zhihudaily.fragment.HomeNewsFragment;
@@ -33,11 +34,12 @@ public class MainActivity extends BaseActivity {
     private Toolbar mToolbar;
     private NavigationView mNvDrawer;
     private FrameLayout mFlHomeContent;
-    private HomeNewsFragment mNlfNewsList;
-    private CategoryNewsFragment mCnfNewsList1;
-    private CategoryNewsFragment mCnfNewsList2;
+    private FragmentManager mFragmentManager;
+    private HomeNewsFragment mHomeNewsFragment;
+    private CategoryNewsFragment mCategoryNewsFragment1;
+    private CategoryNewsFragment mCategoryNewsFragment2;
     private Bundle mBundle;
-    private long mFirstTime;
+    private long mFirstTimeToBack;
     private boolean mFirstCategoryFragment;
 
     @Override
@@ -46,22 +48,26 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         initView();
-        initHomeFragment();
         initData();
+        initHomeFragment();
+        updateTheme();
     }
 
     private void initData() {
-        mBundle = new Bundle();
+        mBundle = new Bundle();//传递Fragment参数
+        mFragmentManager = getSupportFragmentManager();//Fragment管理器
         setSupportActionBar(mToolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDlMenu, mToolbar,
                 R.string.drawer_open, R.string.drawer_close);
-        toggle.syncState();
+        toggle.syncState();//抽屉按键的动画效果
         mDlMenu.addDrawerListener(toggle);
         initNavigation();
     }
 
+    /**
+     * 初始化抽屉内容
+     */
     private void initNavigation() {
-        mNvDrawer.setItemBackgroundResource(R.drawable.menu_item_bg);
         mNvDrawer.setNavigationItemSelectedListener(new NavigationView
                 .OnNavigationItemSelectedListener() {
             @Override
@@ -125,15 +131,15 @@ public class MainActivity extends BaseActivity {
 
         //用两个Fragment轮流显示主题新闻，因为不能多次setArguments()
         if (mFirstCategoryFragment) {
-            mCnfNewsList1.setArguments(mBundle);
+            mCategoryNewsFragment1.setArguments(mBundle);
         } else {
-            mCnfNewsList2.setArguments(mBundle);
+            mCategoryNewsFragment2.setArguments(mBundle);
         }
 
-        getSupportFragmentManager().beginTransaction()
+        mFragmentManager.beginTransaction()
                 .replace(R.id.fl_content, mFirstCategoryFragment
-                        ? mCnfNewsList1
-                        : mCnfNewsList2)
+                        ? mCategoryNewsFragment1
+                        : mCategoryNewsFragment2)
                 .commit();
     }
 
@@ -170,15 +176,15 @@ public class MainActivity extends BaseActivity {
 
     private void initHomeFragment() {
         mToolbar.setTitle(R.string.navigation_home);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fl_content, mNlfNewsList)
+        mFragmentManager.beginTransaction()
+                .replace(R.id.fl_content, mHomeNewsFragment)
                 .commit();
     }
 
     private void initView() {
-        mNlfNewsList = new HomeNewsFragment();
-        mCnfNewsList1 = new CategoryNewsFragment();
-        mCnfNewsList2 = new CategoryNewsFragment();
+        mHomeNewsFragment = new HomeNewsFragment();
+        mCategoryNewsFragment1 = new CategoryNewsFragment();
+        mCategoryNewsFragment2 = new CategoryNewsFragment();
         mDlMenu = (DrawerLayout) findViewById(R.id.drawer_layout);
         mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         mNvDrawer = (NavigationView) findViewById(R.id.nv_drawer);
@@ -191,9 +197,9 @@ public class MainActivity extends BaseActivity {
             mDlMenu.closeDrawers();
         } else {
             long secondTime = System.currentTimeMillis();
-            if (secondTime - mFirstTime > 2000) {
+            if (secondTime - mFirstTimeToBack > 2000) {
                 Snackbar.make(mFlHomeContent, "再按一次退出", Snackbar.LENGTH_SHORT).show();
-                mFirstTime = secondTime;
+                mFirstTimeToBack = secondTime;
             } else {
                 finish();
             }
@@ -203,6 +209,12 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        menu.getItem(0).setIcon(isNightMode()
+                ? R.drawable.ic_light_theme
+                : R.drawable.ic_night_theme);
+        menu.getItem(0).setTitle(isNightMode()
+                ? R.string.light_mode
+                : R.string.night_mode);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -212,6 +224,16 @@ public class MainActivity extends BaseActivity {
             mDlMenu.closeDrawers();
         }
         switch (item.getItemId()) {
+            case R.id.menu_item_day_or_night_mode:
+                setNightMode(!isNightMode());
+                item.setTitle(isNightMode()
+                        ? R.string.light_mode
+                        : R.string.night_mode);
+                item.setIcon(isNightMode()
+                        ? R.drawable.ic_light_theme
+                        : R.drawable.ic_night_theme);
+                updateTheme();
+                break;
             case R.id.menu_item_clear_cache:
                 ThreadManager.getInstance().createLongPool().execute(new Runnable() {
                     @Override
@@ -226,16 +248,18 @@ public class MainActivity extends BaseActivity {
                         new NewsDetailDB().deleteAll();
                         new ThemeNewsDB().deleteAll();
 
-                        //清除cache文件夹缓存
-                        File file = new File(getCacheDir().getPath());
-                        final boolean isSuccessful = deleteAllFile(file);
+                        //清除cache文件夹以及Web缓存
+                        File fileCache = new File(getCacheDir().getPath());
+                        File webCache = new File(getFilesDir().getParent() + "/app_webview");
+                        final boolean isSuccessful = deleteAllFile(fileCache)
+                                && deleteAllFile(webCache);
 
                         UiUtils.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mNlfNewsList.onRefresh();
+                                mHomeNewsFragment.onRefresh();
                                 Snackbar.make(mFlHomeContent,
-                                        isSuccessful ? "清除缓存成功" : "清除缓存失败",
+                                        isSuccessful ? "清除缓存成功" : "清除缓存失败或无缓存",
                                         Snackbar.LENGTH_SHORT).show();
                             }
                         });
@@ -247,6 +271,26 @@ public class MainActivity extends BaseActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateTheme() {
+        mToolbar.setBackgroundResource(isNightMode()
+                ? R.color.colorGrayBlack
+                : R.color.colorPrimary);
+        mDlMenu.setBackgroundResource(isNightMode()
+                ? R.color.colorDarkGray
+                : R.color.colorWhite);
+        mNvDrawer.setBackgroundResource(isNightMode()
+                ? R.color.colorGray
+                : R.color.colorWhite);
+        mNvDrawer.setItemBackgroundResource(isNightMode()
+                ? R.drawable.menu_item_bg_night
+                : R.drawable.menu_item_bg_light);
+        mHomeNewsFragment.updateTheme();
+        mCategoryNewsFragment1.updateTheme();
+        mCategoryNewsFragment2.updateTheme();
+        //TODO 夜间模式抽屉字体的颜色
+//        mNvDrawer.setItemTextColor(new ColorStateList(new int[][]{}, new int[]{Color.WHITE}));
     }
 
     /**

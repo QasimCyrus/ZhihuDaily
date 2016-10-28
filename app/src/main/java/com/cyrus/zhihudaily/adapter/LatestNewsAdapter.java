@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cyrus.zhihudaily.BaseActivity;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.activity.NewsDetailActivity;
 import com.cyrus.zhihudaily.constants.DataConstant;
@@ -35,12 +36,12 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 /**
- * 新闻列表适配器
+ * 最新新闻的列表适配器
  * <p>
  * Created by Cyrus on 2016/10/12.
  */
 
-public class NewsAdapter
+public class LatestNewsAdapter
         extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements ViewPager.OnPageChangeListener {
 
@@ -57,6 +58,10 @@ public class NewsAdapter
      * 上下文
      */
     private Context mContext;
+    /**
+     * 判断当前是夜间模式还是日间模式，true为夜间模式
+     */
+    private boolean mIsNightMode;
     /**
      * 新闻结构体
      */
@@ -92,7 +97,7 @@ public class NewsAdapter
     private ViewPager mHeaderPager;
     private ImageView mIvsGuideSpots[];
 
-    public NewsAdapter(Context context, LatestNewsData newsData) {
+    public LatestNewsAdapter(Context context, LatestNewsData newsData) {
         mContext = context;
         mNewsData = newsData;
         mTopStories = mNewsData.getTop_stories();
@@ -100,6 +105,9 @@ public class NewsAdapter
         mStories.add(0, null);
         mNewsSp = UiUtils.getContext().getSharedPreferences(SharePreferenceConstant
                 .NEWS_PREFERENCE_NAME, Context.MODE_PRIVATE);
+        mIsNightMode = UiUtils.getContext().getSharedPreferences(
+                SharePreferenceConstant.PREFERENCE_NAME, Context.MODE_PRIVATE)
+                .getBoolean(SharePreferenceConstant.IS_NIGHT_MODE, false);
     }
 
     @Override
@@ -153,43 +161,56 @@ public class NewsAdapter
              * 当前位置是否显示日期；
              * 对象为null代表该位置的控件仅仅是用于显示时间轴而不显示卡片
              */
-            if (position == 1) {//position为0是头条，从position为1开始是每日新闻，该位置为null
+            if (story != null) {
+                tvTime.setVisibility(GONE);
+                cvItem.setVisibility(VISIBLE);
+                //设置卡片标题
+                tvTitle.setText(story.getTitle());
+                if (mIsNightMode) {
+                    tvTitle.setTextColor(mNewsSp.getBoolean(story.getId(), false)
+                            ? 0xFFBBBBBE
+                            : 0xEEDDDDDD);
+                } else {
+                    tvTitle.setTextColor(mNewsSp.getBoolean(story.getId(), false)
+                            ? Color.GRAY
+                            : Color.BLACK);
+                }
+                //设置卡片图片
+                LoadImageUtils.loadImage(story.getImages().get(0), ivTitle);
+                //设置卡片点击效果和事件（点击效果在xml文件里设置没有作用？）
+                cvItem.setBackgroundResource(mIsNightMode
+                        ? R.drawable.card_bg_night
+                        : R.drawable.card_bg_light);
+                cvItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        tvTitle.setTextColor(mIsNightMode
+                                ? 0xFFBBBBBB
+                                : Color.GRAY);
+                        mNewsSp.edit().putBoolean(story.getId(), true).apply();//记录已点击
+
+                        IntentStory intentStory = new IntentStory();
+
+                        intentStory.setId(story.getId());
+                        intentStory.setTitle(story.getTitle());
+                        ArrayList<String> images = story.getImages();
+                        intentStory.setImages(images);
+
+                        Intent intent = new Intent(UiUtils.getContext(),
+                                NewsDetailActivity.class);
+                        intent.putExtra(DataConstant.INTENT_NEWS, intentStory);
+                        mContext.startActivity(intent);
+                    }
+                });
+            } else {
                 cvItem.setVisibility(GONE);
                 tvTime.setVisibility(VISIBLE);
-                tvTime.setText(R.string.news_list_today);
-            } else {
-                if (story != null) {
-                    tvTime.setVisibility(GONE);
-                    cvItem.setVisibility(VISIBLE);
-                    //设置卡片标题
-                    tvTitle.setText(story.getTitle());
-                    tvTitle.setTextColor(mNewsSp.getBoolean(story.getId(), false)
-                            ? Color.GRAY : Color.BLACK);//已点击过则显示灰色，未点击显示黑色
-                    //设置卡片图片
-                    LoadImageUtils.loadImage(story.getImages().get(0), ivTitle);
-                    //设置卡片点击事件
-                    cvItem.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            tvTitle.setTextColor(Color.GRAY);
-                            mNewsSp.edit().putBoolean(story.getId(), true).apply();//记录已点击
-
-                            IntentStory intentStory = new IntentStory();
-
-                            intentStory.setId(story.getId());
-                            intentStory.setTitle(story.getTitle());
-                            ArrayList<String> images = story.getImages();
-                            intentStory.setImages(images);
-
-                            Intent intent = new Intent(UiUtils.getContext(),
-                                    NewsDetailActivity.class);
-                            intent.putExtra(DataConstant.INTENT_NEWS, intentStory);
-                            mContext.startActivity(intent);
-                        }
-                    });
+                tvTime.setTextColor(mIsNightMode
+                        ? 0xEEDDDDDD
+                        : Color.BLACK);
+                if (position == 1) {//position为0是TopStory，从position为1开始是Story
+                    tvTime.setText(R.string.news_list_today);
                 } else {
-                    cvItem.setVisibility(GONE);
-                    tvTime.setVisibility(VISIBLE);
                     tvTime.setText(DateUtils.convertDate(mStories.get(position).getDate()));
                 }
             }
@@ -238,6 +259,11 @@ public class NewsAdapter
         mTopStories = mNewsData.getTop_stories();
         mStories = mNewsData.getStories();
         mStories.add(0, null);
+    }
+
+    public void updateTheme() {
+        mIsNightMode = ((BaseActivity) mContext).isNightMode();
+        notifyDataSetChanged();
     }
 
     /**

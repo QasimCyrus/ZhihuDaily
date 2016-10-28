@@ -84,10 +84,10 @@ public class NewsDetailActivity extends BaseActivity {
 
     }
 
-    private void loadWeb(String result) {
+    private void loadWeb(final String result) {
         if (result != null) {
             Gson gson = new Gson();
-            final NetNewsData netNewsData = gson.fromJson(result, NetNewsData.class);
+            NetNewsData netNewsData = gson.fromJson(result, NetNewsData.class);
 
             //加载封面
             LoadImageUtils.loadImage(netNewsData.getImage(), mIvCover);
@@ -101,8 +101,16 @@ public class NewsDetailActivity extends BaseActivity {
                             Snackbar.LENGTH_SHORT).show();
                 }
             } else {
-                String css = "<link rel=\"stylesheet\" " +
-                        "href=\"file:///android_asset/style_light.css\" type=\"text/css\">";
+                String css;
+                if (isNightMode()) {
+                    css = "<link rel=\"stylesheet\" " +
+                            "href=\"file:///android_asset/style_night.css\" " +
+                            "type=\"text/css\">";
+                } else {
+                    css = "<link rel=\"stylesheet\" " +
+                            "href=\"file:///android_asset/style_light.css\" " +
+                            "type=\"text/css\">";
+                }
                 String html = "<html><head>" + css + "</head></body>" +
                         netNewsData.getBody() + "</body></html>";
                 html = html.replace("<div class=\"img-place-holder\">", "");

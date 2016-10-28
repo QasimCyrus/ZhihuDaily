@@ -46,18 +46,34 @@ public class UiUtils {
     }
 
 
+    /**
+     * 在主线程（UI线程）里执行任务
+     *
+     * @param runnable 要执行的任务
+     */
     public static void runOnUiThread(Runnable runnable) {
-        if (android.os.Process.myTid() == BaseApplication.getMainTid()) {
-            runnable.run();
-        } else {
+        if (android.os.Process.myTid() == BaseApplication.getMainTid()) {//如果当前线程ID是主线程ID
+            runnable.run();//执行runnable
+        } else {//如果当前ID不是主线程ID，将runnable放入队列中等待执行
             BaseApplication.getHandler().post(runnable);
         }
     }
 
+    /**
+     * 取消某个任务
+     *
+     * @param runnable 要取消的任务
+     */
     public static void cancel(Runnable runnable) {
         BaseApplication.getHandler().removeCallbacks(runnable);
     }
 
+    /**
+     * 延迟执行任务
+     *
+     * @param autoRunTask 要执行的任务
+     * @param time 延迟的时间（毫秒）
+     */
     public static void postDelayed(Runnable autoRunTask, int time) {
         BaseApplication.getHandler().postDelayed(autoRunTask, time);
     }

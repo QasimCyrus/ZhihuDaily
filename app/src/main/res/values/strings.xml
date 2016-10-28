@@ -37,5 +37,7 @@
     <string name="navigation_comic">动漫日报</string>
     <string name="navigation_sport">体育日报</string>
     <string name="info_internet_disconnected">无网络连接</string>
+    <string name="night_mode">夜间模式</string>
+    <string name="light_mode">日间模式</string>
 
 </resources>

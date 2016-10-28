@@ -2,6 +2,7 @@ package com.cyrus.zhihudaily.fragment;
 
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import com.cyrus.zhihudaily.models.CategoryNewsData;
 import com.cyrus.zhihudaily.models.IntentStory;
 import com.cyrus.zhihudaily.models.Story;
 import com.cyrus.zhihudaily.utils.LoadingNewsUtils;
+import com.cyrus.zhihudaily.utils.NetUtils;
 import com.cyrus.zhihudaily.utils.UiUtils;
 import com.cyrus.zhihudaily.view.LoadingPage;
 import com.google.gson.Gson;
@@ -39,13 +41,14 @@ public class CategoryNewsFragment extends Fragment
     private IntentStoryAdapter mAdapter;
 
     private List<String> mIntentNewsList;
+    private FrameLayout mFlContent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_category_news, container, false);
 
-        FrameLayout flContent = (FrameLayout) view.findViewById(R.id.fl_content);
+        mFlContent = (FrameLayout) view.findViewById(R.id.fl_content);
         LoadingPage loadingPage = new LoadingPage(UiUtils.getContext()) {
             @Override
             public View createSuccessView() {
@@ -59,39 +62,45 @@ public class CategoryNewsFragment extends Fragment
         };
 
         loadingPage.show();
-        flContent.addView(loadingPage);
+        mFlContent.addView(loadingPage);
 
         return view;
     }
 
     private View successView() {
         View view = View.inflate(UiUtils.getContext(), R.layout.page_success, null);
-        mSrlLoad = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
-        RecyclerView rvNews = (RecyclerView) view.findViewById(R.id.rv_news_list);
 
+        mSrlLoad = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        mSrlLoad.setOnRefreshListener(this);
+
+        RecyclerView rvNews = (RecyclerView) view.findViewById(R.id.rv_news_list);
         rvNews.setLayoutManager(new LinearLayoutManager(getContext()));
+
         mAdapter = new IntentStoryAdapter(getContext(), mIntentNewsList);
         rvNews.setAdapter(mAdapter);
-        mSrlLoad.setOnRefreshListener(this);
 
         return view;
     }
 
     @Override
     public void onRefresh() {
-        ThreadManager.getInstance().createLongPool().execute(new Runnable() {
-            @Override
-            public void run() {
-                loadNews();
-                UiUtils.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mAdapter.notifyDataChanged(mIntentNewsList);
-                        mSrlLoad.setRefreshing(false);
-                    }
-                });
-            }
-        });
+        if (NetUtils.isNetConnectedOrConnecting()) {
+            ThreadManager.getInstance().createLongPool().execute(new Runnable() {
+                @Override
+                public void run() {
+                    loadNews();
+                    UiUtils.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAdapter.notifyDataChanged(mIntentNewsList);
+                            mSrlLoad.setRefreshing(false);
+                        }
+                    });
+                }
+            });
+        } else {
+            showDisconnectedInfo();
+        }
     }
 
     /**
@@ -131,6 +140,21 @@ public class CategoryNewsFragment extends Fragment
             }
 
             return LoadingPage.LoadResult.SUCCESS;
+        }
+    }
+
+    /**
+     * 无网络连接的提示
+     */
+    private void showDisconnectedInfo() {
+        Snackbar.make(mFlContent, R.string.info_internet_disconnected,
+                Snackbar.LENGTH_SHORT).show();
+        mSrlLoad.setRefreshing(false);
+    }
+
+    public void updateTheme() {
+        if (mAdapter != null) {
+            mAdapter.updateTheme();
         }
     }
 
