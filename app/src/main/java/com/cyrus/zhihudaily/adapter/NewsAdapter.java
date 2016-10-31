@@ -20,7 +20,7 @@ import com.cyrus.zhihudaily.constants.DataConstant;
 import com.cyrus.zhihudaily.constants.SharePreferenceConstant;
 import com.cyrus.zhihudaily.holder.CardHolder;
 import com.cyrus.zhihudaily.holder.HeaderHolder;
-import com.cyrus.zhihudaily.models.IntentStory;
+import com.cyrus.zhihudaily.models.SimpleStory;
 import com.cyrus.zhihudaily.models.LatestNewsData;
 import com.cyrus.zhihudaily.models.Story;
 import com.cyrus.zhihudaily.models.TopStory;
@@ -153,43 +153,42 @@ public class NewsAdapter
              * 当前位置是否显示日期；
              * 对象为null代表该位置的控件仅仅是用于显示时间轴而不显示卡片
              */
-            if (position == 1) {//position为0是头条，从position为1开始是每日新闻，该位置为null
+            if (story != null) {
+                tvTime.setVisibility(GONE);
+                cvItem.setVisibility(VISIBLE);
+                //设置卡片标题
+                tvTitle.setText(story.getTitle());
+                tvTitle.setTextColor(mNewsSp.getBoolean(story.getId(), false)
+                        ? Color.GRAY : Color.BLACK);//已点击过则显示灰色，未点击显示黑色
+                //设置卡片图片
+                LoadImageUtils.loadImage(story.getImages().get(0), ivTitle);
+                //设置卡片点击效果和响应事件
+                cvItem.setBackgroundResource(R.drawable.btn_bg);
+                cvItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        tvTitle.setTextColor(Color.GRAY);
+                        mNewsSp.edit().putBoolean(story.getId(), true).apply();//记录已点击
+
+                        SimpleStory simpleStory = new SimpleStory();
+
+                        simpleStory.setId(story.getId());
+                        simpleStory.setTitle(story.getTitle());
+                        ArrayList<String> images = story.getImages();
+                        simpleStory.setImages(images);
+
+                        Intent intent = new Intent(UiUtils.getContext(),
+                                NewsDetailActivity.class);
+                        intent.putExtra(DataConstant.INTENT_NEWS, simpleStory);
+                        mContext.startActivity(intent);
+                    }
+                });
+            } else {
                 cvItem.setVisibility(GONE);
                 tvTime.setVisibility(VISIBLE);
-                tvTime.setText(R.string.news_list_today);
-            } else {
-                if (story != null) {
-                    tvTime.setVisibility(GONE);
-                    cvItem.setVisibility(VISIBLE);
-                    //设置卡片标题
-                    tvTitle.setText(story.getTitle());
-                    tvTitle.setTextColor(mNewsSp.getBoolean(story.getId(), false)
-                            ? Color.GRAY : Color.BLACK);//已点击过则显示灰色，未点击显示黑色
-                    //设置卡片图片
-                    LoadImageUtils.loadImage(story.getImages().get(0), ivTitle);
-                    //设置卡片点击事件
-                    cvItem.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            tvTitle.setTextColor(Color.GRAY);
-                            mNewsSp.edit().putBoolean(story.getId(), true).apply();//记录已点击
-
-                            IntentStory intentStory = new IntentStory();
-
-                            intentStory.setId(story.getId());
-                            intentStory.setTitle(story.getTitle());
-                            ArrayList<String> images = story.getImages();
-                            intentStory.setImages(images);
-
-                            Intent intent = new Intent(UiUtils.getContext(),
-                                    NewsDetailActivity.class);
-                            intent.putExtra(DataConstant.INTENT_NEWS, intentStory);
-                            mContext.startActivity(intent);
-                        }
-                    });
+                if (position == 1) {
+                    tvTime.setText(R.string.news_list_today);
                 } else {
-                    cvItem.setVisibility(GONE);
-                    tvTime.setVisibility(VISIBLE);
                     tvTime.setText(DateUtils.convertDate(mStories.get(position).getDate()));
                 }
             }

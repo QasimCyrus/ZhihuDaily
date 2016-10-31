@@ -32,7 +32,8 @@ import java.util.ArrayList;
  * Created by Cyrus on 2016/10/12.
  */
 
-public class HomeNewsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class HomeNewsFragment extends Fragment
+        implements SwipeRefreshLayout.OnRefreshListener {
 
     /**
      * 记录当前列表已经加载了哪一天的数据

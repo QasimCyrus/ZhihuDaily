@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.cyrus.zhihudaily.BaseActivity;
 import com.cyrus.zhihudaily.R;
-import com.cyrus.zhihudaily.adapter.IntentStoryAdapter;
+import com.cyrus.zhihudaily.adapter.SimpleStoryAdapter;
 import com.cyrus.zhihudaily.database.FavoriteNewsDB;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class FavoriteActivity extends BaseActivity {
     private Toolbar mToolbar;
     private RecyclerView mRvFavorites;
     private TextView mTvTip;
-    private IntentStoryAdapter mAdapter;
+    private SimpleStoryAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +73,7 @@ public class FavoriteActivity extends BaseActivity {
                 mTvTip.setVisibility(GONE);
 
                 if (mAdapter == null) {
-                    mAdapter = new IntentStoryAdapter(this, favorites);
+                    mAdapter = new SimpleStoryAdapter(this, favorites);
                     mRvFavorites.setLayoutManager(new LinearLayoutManager(this));
                     mRvFavorites.setAdapter(mAdapter);
                 } else {

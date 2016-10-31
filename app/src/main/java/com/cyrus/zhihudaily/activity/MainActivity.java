@@ -1,5 +1,6 @@
 package com.cyrus.zhihudaily.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,24 +9,28 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.DatePicker;
 import android.widget.FrameLayout;
 
 import com.cyrus.zhihudaily.BaseActivity;
 import com.cyrus.zhihudaily.R;
-import com.cyrus.zhihudaily.constants.DataConstant;
 import com.cyrus.zhihudaily.constants.SharePreferenceConstant;
-import com.cyrus.zhihudaily.database.NewsDetailDB;
 import com.cyrus.zhihudaily.database.NewsDB;
+import com.cyrus.zhihudaily.database.NewsDetailDB;
 import com.cyrus.zhihudaily.database.ThemeNewsDB;
 import com.cyrus.zhihudaily.fragment.CategoryNewsFragment;
+import com.cyrus.zhihudaily.fragment.DateNewsFragment;
 import com.cyrus.zhihudaily.fragment.HomeNewsFragment;
 import com.cyrus.zhihudaily.manager.ThreadManager;
 import com.cyrus.zhihudaily.utils.UiUtils;
 
 import java.io.File;
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends BaseActivity {
 
@@ -33,12 +38,10 @@ public class MainActivity extends BaseActivity {
     private Toolbar mToolbar;
     private NavigationView mNvDrawer;
     private FrameLayout mFlHomeContent;
-    private HomeNewsFragment mNlfNewsList;
-    private CategoryNewsFragment mCnfNewsList1;
-    private CategoryNewsFragment mCnfNewsList2;
-    private Bundle mBundle;
-    private long mFirstTime;
-    private boolean mFirstCategoryFragment;
+    private HomeNewsFragment mHomeNewsFragment;
+    private CategoryNewsFragment mCategoryNewsFragment;
+    private DateNewsFragment mDateNewsFragment;
+    private long mFirstPressBackTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +54,6 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initData() {
-        mBundle = new Bundle();
         setSupportActionBar(mToolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDlMenu, mToolbar,
                 R.string.drawer_open, R.string.drawer_close);
@@ -77,40 +79,40 @@ public class MainActivity extends BaseActivity {
                         startActivity(new Intent(MainActivity.this, FavoriteActivity.class));
                         return true;
                     case R.id.nav_comic:
-                        initCategoryFragment(ThemeId.COMIC_ID, item.getTitle().toString());
+                        setCategoryFragment(ThemeId.COMIC_ID, item.getTitle().toString());
                         return true;
                     case R.id.nav_company:
-                        initCategoryFragment(ThemeId.COMPANY_ID, item.getTitle().toString());
+                        setCategoryFragment(ThemeId.COMPANY_ID, item.getTitle().toString());
                         return true;
                     case R.id.nav_design:
-                        initCategoryFragment(ThemeId.DESIGN_ID, item.getTitle().toString());
+                        setCategoryFragment(ThemeId.DESIGN_ID, item.getTitle().toString());
                         return true;
                     case R.id.nav_finance:
-                        initCategoryFragment(ThemeId.FINANCE_ID, item.getTitle().toString());
+                        setCategoryFragment(ThemeId.FINANCE_ID, item.getTitle().toString());
                         return true;
                     case R.id.nav_game:
-                        initCategoryFragment(ThemeId.GAME_ID, item.getTitle().toString());
+                        setCategoryFragment(ThemeId.GAME_ID, item.getTitle().toString());
                         return true;
                     case R.id.nav_internet:
-                        initCategoryFragment(ThemeId.INTERNET_ID, item.getTitle().toString());
+                        setCategoryFragment(ThemeId.INTERNET_ID, item.getTitle().toString());
                         return true;
                     case R.id.nav_movie:
-                        initCategoryFragment(ThemeId.MOVIE_ID, item.getTitle().toString());
+                        setCategoryFragment(ThemeId.MOVIE_ID, item.getTitle().toString());
                         return true;
                     case R.id.nav_music:
-                        initCategoryFragment(ThemeId.MUSIC_ID, item.getTitle().toString());
+                        setCategoryFragment(ThemeId.MUSIC_ID, item.getTitle().toString());
                         return true;
                     case R.id.nav_not_boring:
-                        initCategoryFragment(ThemeId.NOT_BORING_ID, item.getTitle().toString());
+                        setCategoryFragment(ThemeId.NOT_BORING_ID, item.getTitle().toString());
                         return true;
                     case R.id.nav_psychology:
-                        initCategoryFragment(ThemeId.PSYCHOLOGY_ID, item.getTitle().toString());
+                        setCategoryFragment(ThemeId.PSYCHOLOGY_ID, item.getTitle().toString());
                         return true;
                     case R.id.nav_recommend:
-                        initCategoryFragment(ThemeId.RECOMMEND_ID, item.getTitle().toString());
+                        setCategoryFragment(ThemeId.RECOMMEND_ID, item.getTitle().toString());
                         return true;
                     case R.id.nav_sport:
-                        initCategoryFragment(ThemeId.SPORT_ID, item.getTitle().toString());
+                        setCategoryFragment(ThemeId.SPORT_ID, item.getTitle().toString());
                         return true;
                 }
                 return false;
@@ -118,22 +120,33 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private void initCategoryFragment(String id, String title) {
+    /**
+     * 设置分类新闻的界面
+     *
+     * @param id 分类新闻的主题
+     * @param title 分类新闻界面的标题
+     */
+    private void setCategoryFragment(String id, String title) {
         mToolbar.setTitle(title);
-        mBundle.putString(DataConstant.BUNDLE_THEME_ID, id);
-        mFirstCategoryFragment = !mFirstCategoryFragment;
-
-        //用两个Fragment轮流显示主题新闻，因为不能多次setArguments()
-        if (mFirstCategoryFragment) {
-            mCnfNewsList1.setArguments(mBundle);
-        } else {
-            mCnfNewsList2.setArguments(mBundle);
-        }
+        mCategoryNewsFragment.setThemeId(id);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fl_content, mFirstCategoryFragment
-                        ? mCnfNewsList1
-                        : mCnfNewsList2)
+                .replace(R.id.fl_content, mCategoryNewsFragment)
+                .commit();
+    }
+
+    /**
+     * 设置某个日期的新闻的界面
+     *
+     * @param date 要查看新闻的日期
+     * @param title 某个日期的新闻界面的标题
+     */
+    private void setDateNewsFragment(String date, String title) {
+        mToolbar.setTitle(title);
+        mDateNewsFragment.setDate(date);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fl_content, mDateNewsFragment)
                 .commit();
     }
 
@@ -171,14 +184,14 @@ public class MainActivity extends BaseActivity {
     private void initHomeFragment() {
         mToolbar.setTitle(R.string.navigation_home);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fl_content, mNlfNewsList)
+                .replace(R.id.fl_content, mHomeNewsFragment)
                 .commit();
     }
 
     private void initView() {
-        mNlfNewsList = new HomeNewsFragment();
-        mCnfNewsList1 = new CategoryNewsFragment();
-        mCnfNewsList2 = new CategoryNewsFragment();
+        mHomeNewsFragment = new HomeNewsFragment();
+        mCategoryNewsFragment = new CategoryNewsFragment();
+        mDateNewsFragment = new DateNewsFragment();
         mDlMenu = (DrawerLayout) findViewById(R.id.drawer_layout);
         mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         mNvDrawer = (NavigationView) findViewById(R.id.nv_drawer);
@@ -191,9 +204,9 @@ public class MainActivity extends BaseActivity {
             mDlMenu.closeDrawers();
         } else {
             long secondTime = System.currentTimeMillis();
-            if (secondTime - mFirstTime > 2000) {
+            if (secondTime - mFirstPressBackTime > 2000) {
                 Snackbar.make(mFlHomeContent, "再按一次退出", Snackbar.LENGTH_SHORT).show();
-                mFirstTime = secondTime;
+                mFirstPressBackTime = secondTime;
             } else {
                 finish();
             }
@@ -212,7 +225,43 @@ public class MainActivity extends BaseActivity {
             mDlMenu.closeDrawers();
         }
         switch (item.getItemId()) {
-            case R.id.menu_item_clear_cache:
+            case R.id.menu_item_pick_date://选择新闻日期
+                //知乎日报最早时间：2015.05.20
+                Calendar minCalendar = Calendar.getInstance();
+                minCalendar.set(2013, 4, 20);
+                Date minDate = minCalendar.getTime();
+
+                Calendar maxCalendar = Calendar.getInstance();
+                Date maxDate = maxCalendar.getTime();
+
+                final DatePicker datePicker = new DatePicker(this);
+                datePicker.setMinDate(minDate.getTime());
+                datePicker.setMaxDate(maxDate.getTime());
+
+                new AlertDialog.Builder(this)
+                        .setView(datePicker)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //获得选择的日期
+                                String yyyy = String.valueOf(datePicker.getYear());
+                                int month = datePicker.getMonth();
+                                String MM = String.valueOf(month + 1);
+                                if (month < 9) {
+                                    MM = "0" + MM;
+                                }
+                                String dd = String.valueOf(datePicker.getDayOfMonth());
+
+                                String pickDate = yyyy + MM + dd;
+                                String title = yyyy + "年" + MM + "月" + dd + "日";
+
+                                setDateNewsFragment(pickDate, title);
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();
+                return true;
+            case R.id.menu_item_clear_cache://清除缓存
                 ThreadManager.getInstance().createLongPool().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -226,23 +275,25 @@ public class MainActivity extends BaseActivity {
                         new NewsDetailDB().deleteAll();
                         new ThemeNewsDB().deleteAll();
 
-                        //清除cache文件夹缓存
-                        File file = new File(getCacheDir().getPath());
-                        final boolean isSuccessful = deleteAllFile(file);
+                        //清除cache文件夹以及Web缓存
+                        File fileCache = new File(getCacheDir().getPath());
+                        File webCache = new File(getFilesDir().getParent() + "/app_webview");
+                        final boolean isSuccessful = deleteAllFile(fileCache)
+                                && deleteAllFile(webCache);
 
                         UiUtils.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mNlfNewsList.onRefresh();
+                                mHomeNewsFragment.onRefresh();
                                 Snackbar.make(mFlHomeContent,
-                                        isSuccessful ? "清除缓存成功" : "清除缓存失败",
+                                        isSuccessful ? "清除缓存成功" : "清除缓存失败或无缓存",
                                         Snackbar.LENGTH_SHORT).show();
                             }
                         });
                     }
                 });
                 return true;
-            case R.id.menu_item_about:
+            case R.id.menu_item_about://关于
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
                 return true;
         }

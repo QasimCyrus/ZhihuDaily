@@ -6,11 +6,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * 用于活动间传递的新闻结构体
+ * 简洁化的新闻结构体
  * <p>
  * Created by Cyrus on 2016/10/15.
  */
-public class IntentStory implements Serializable {
+public class SimpleStory implements Serializable {
 
     @SerializedName("id")
     private String mId;

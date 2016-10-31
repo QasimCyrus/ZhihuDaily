@@ -23,7 +23,7 @@ import com.cyrus.zhihudaily.constants.GlobalConstant;
 import com.cyrus.zhihudaily.database.FavoriteNewsDB;
 import com.cyrus.zhihudaily.database.NewsDetailDB;
 import com.cyrus.zhihudaily.manager.ThreadManager;
-import com.cyrus.zhihudaily.models.IntentStory;
+import com.cyrus.zhihudaily.models.SimpleStory;
 import com.cyrus.zhihudaily.models.NetNewsData;
 import com.cyrus.zhihudaily.utils.LoadImageUtils;
 import com.cyrus.zhihudaily.utils.NetUtils;
@@ -136,14 +136,14 @@ public class NewsDetailActivity extends BaseActivity {
         mFavDB = new FavoriteNewsDB();
         mDetailDB = new NewsDetailDB();
 
-        final IntentStory intentStory = (IntentStory) getIntent()
+        final SimpleStory simpleStory = (SimpleStory) getIntent()
                 .getSerializableExtra(DataConstant.INTENT_NEWS);
-        mNewsId = intentStory.getId();
+        mNewsId = simpleStory.getId();
         mIsFavorite = mFavDB.find(mNewsId);
         mDetailJson = mDetailDB.find(mNewsId);
 
         //工具栏设置
-        mToolbar.setTitle(intentStory.getTitle());//设置标题要放在setSupportActionBar之前
+        mToolbar.setTitle(simpleStory.getTitle());//设置标题要放在setSupportActionBar之前
         setSupportActionBar(mToolbar);//一定要放在响应点击事件前面，点击事件的响应才会生效
         mToolbar.setBackgroundColor(UiUtils.setColor(R.color.colorTransparentWhite));
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -164,7 +164,7 @@ public class NewsDetailActivity extends BaseActivity {
                                 : R.drawable.favorite_normal);
 
                         if (mIsFavorite) {
-                            mFavDB.insert(mNewsId, generateJSON(intentStory));
+                            mFavDB.insert(mNewsId, generateJSON(simpleStory));
                         } else {
                             mFavDB.delete(mNewsId);
                         }
@@ -183,18 +183,18 @@ public class NewsDetailActivity extends BaseActivity {
     /**
      * 将当前传入的新闻转换成json类型
      *
-     * @param intentStory 从意图中传入的新闻
+     * @param simpleStory 从意图中传入的新闻
      * @return 当前意图新闻的json字符串
      */
-    private String generateJSON(final IntentStory intentStory) {
+    private String generateJSON(final SimpleStory simpleStory) {
         Gson gson = new Gson();
-        JsonElement element = gson.toJsonTree(intentStory, IntentStory.class);
+        JsonElement element = gson.toJsonTree(simpleStory, SimpleStory.class);
         return gson.toJson(element);
 //        JSONObject jsonObject = new JSONObject();
 //        try {
-//            jsonObject.put("id", intentStory.getId());
-//            jsonObject.put("title", intentStory.getTitle());
-//            jsonObject.put("images", intentStory.getImages());
+//            jsonObject.put("id", simpleStory.getId());
+//            jsonObject.put("title", simpleStory.getTitle());
+//            jsonObject.put("images", simpleStory.getImages());
 //
 //            return jsonObject.toString();
 //        } catch (JSONException e) {

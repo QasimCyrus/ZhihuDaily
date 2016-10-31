@@ -15,7 +15,7 @@ import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.adapter.SimpleStoryAdapter;
 import com.cyrus.zhihudaily.constants.GlobalConstant;
 import com.cyrus.zhihudaily.manager.ThreadManager;
-import com.cyrus.zhihudaily.models.CategoryNewsData;
+import com.cyrus.zhihudaily.models.LatestNewsData;
 import com.cyrus.zhihudaily.models.SimpleStory;
 import com.cyrus.zhihudaily.models.Story;
 import com.cyrus.zhihudaily.utils.LoadingNewsUtils;
@@ -27,23 +27,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 分类新闻列表
- * <p>
- * Created by Cyrus on 2016/10/22.
+ * 某个日期的新闻列表
  */
-public class CategoryNewsFragment extends Fragment
+public class DateNewsFragment extends Fragment
         implements SwipeRefreshLayout.OnRefreshListener {
 
     private SwipeRefreshLayout mSrlLoad;
     private SimpleStoryAdapter mAdapter;
 
     private List<String> mSimpleNewsList;
-    private String mThemeId;
+    private String mDate;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_category_news, container, false);
+        View view = inflater.inflate(R.layout.fragment_date_news, container, false);
 
         FrameLayout flContent = (FrameLayout) view.findViewById(R.id.fl_content);
         LoadingPage loadingPage = new LoadingPage(UiUtils.getContext()) {
@@ -101,8 +99,8 @@ public class CategoryNewsFragment extends Fragment
      */
     private LoadingPage.LoadResult loadNews() {
         List<Story> stories;
-        CategoryNewsData newsData = LoadingNewsUtils
-                .loadCategory(GlobalConstant.THEME_NEWS_URL + mThemeId);
+        LatestNewsData newsData = LoadingNewsUtils
+                .loadLatest(GlobalConstant.BEFORE_NEWS_URL + mDate);
 
         if (newsData != null) {
             stories = newsData.getStories();
@@ -128,11 +126,10 @@ public class CategoryNewsFragment extends Fragment
         }
     }
 
-    public void setThemeId(String id) {
-        mThemeId = id;
+    public void setDate(String date) {
+        mDate = date;
         if (mAdapter != null) {
             onRefresh();
         }
     }
-
 }

@@ -16,8 +16,8 @@
     <string name="version">Version:1.1</string>
     <string name="user_name">知乎用户</string>
     <string name="navigation_favorite">我的收藏</string>
-    <string name="navigation_about">关于</string>
-    <string name="navigation_clear_cache">清除缓存</string>
+    <string name="about">关于</string>
+    <string name="clear_cache">清除缓存</string>
     <string name="navigation_version">版本</string>
     <string name="navigation_version_code">1.0</string>
     <string name="search">搜索</string>
@@ -37,5 +37,9 @@
     <string name="navigation_comic">动漫日报</string>
     <string name="navigation_sport">体育日报</string>
     <string name="info_internet_disconnected">无网络连接</string>
+    <string name="pick_date">选择日期</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -16,7 +16,7 @@ import com.cyrus.zhihudaily.activity.NewsDetailActivity;
 import com.cyrus.zhihudaily.constants.DataConstant;
 import com.cyrus.zhihudaily.constants.SharePreferenceConstant;
 import com.cyrus.zhihudaily.holder.FavoriteCardHolder;
-import com.cyrus.zhihudaily.models.IntentStory;
+import com.cyrus.zhihudaily.models.SimpleStory;
 import com.cyrus.zhihudaily.utils.LoadImageUtils;
 import com.cyrus.zhihudaily.utils.UiUtils;
 import com.google.gson.Gson;
@@ -30,7 +30,7 @@ import java.util.List;
  * Created by Cyrus on 2016/10/16.
  */
 
-public class IntentStoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SimpleStoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     /**
      * 上下文
@@ -43,13 +43,13 @@ public class IntentStoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     /**
      * 转换为结构体的新闻列表
      */
-    private List<IntentStory> mStories;
+    private List<SimpleStory> mStories;
     /**
      * 新闻首选项
      */
     private SharedPreferences mNewsSp;
 
-    public IntentStoryAdapter(Context context, List<String> storiesString) {
+    public SimpleStoryAdapter(Context context, List<String> storiesString) {
         mContext = context;
         mStoriesString = storiesString;
         parseJson();
@@ -66,31 +66,32 @@ public class IntentStoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         FavoriteCardHolder favCardHolder = (FavoriteCardHolder) holder;
-        final IntentStory intentStory = mStories.get(position);
+        final SimpleStory simpleStory = mStories.get(position);
         CardView cvItem = favCardHolder.getCardView();
         final TextView tvTitle = favCardHolder.getTvTitle();
         ImageView ivTitle = favCardHolder.getIvTitle();
 
         //设置卡片标题
-        tvTitle.setText(intentStory.getTitle());
-        tvTitle.setTextColor(mNewsSp.getBoolean(intentStory.getId(), false)
+        tvTitle.setText(simpleStory.getTitle());
+        tvTitle.setTextColor(mNewsSp.getBoolean(simpleStory.getId(), false)
                 ? Color.GRAY : Color.BLACK);
         //设置卡片图片
-        ArrayList<String> images = intentStory.getImages();
+        ArrayList<String> images = simpleStory.getImages();
         if (images != null) {
-            LoadImageUtils.loadImage(intentStory.getImages().get(0), ivTitle);
+            LoadImageUtils.loadImage(simpleStory.getImages().get(0), ivTitle);
         } else {
             ivTitle.setImageResource(R.drawable.ic_empty_page);
         }
-        //设置卡片点击事件
+        //设置卡片点击效果和点击事件
+        cvItem.setBackgroundResource(R.drawable.btn_bg);
         cvItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tvTitle.setTextColor(Color.GRAY);
-                mNewsSp.edit().putBoolean(intentStory.getId(), true).apply();
+                mNewsSp.edit().putBoolean(simpleStory.getId(), true).apply();
 
                 Intent intent = new Intent(UiUtils.getContext(), NewsDetailActivity.class);
-                intent.putExtra(DataConstant.INTENT_NEWS, intentStory);
+                intent.putExtra(DataConstant.INTENT_NEWS, simpleStory);
                 mContext.startActivity(intent);
             }
         });
@@ -109,8 +110,8 @@ public class IntentStoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         mStories = new ArrayList<>();
 
         for (String json : mStoriesString) {
-            IntentStory intentStory = gson.fromJson(json, IntentStory.class);
-            mStories.add(intentStory);
+            SimpleStory simpleStory = gson.fromJson(json, SimpleStory.class);
+            mStories.add(simpleStory);
         }
     }
 
