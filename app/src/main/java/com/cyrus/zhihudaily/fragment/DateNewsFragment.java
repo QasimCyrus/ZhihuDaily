@@ -34,6 +34,7 @@ public class DateNewsFragment extends Fragment
 
     private SwipeRefreshLayout mSrlLoad;
     private SimpleStoryAdapter mAdapter;
+    private LoadingPage mLoadingPage;
 
     private List<String> mSimpleNewsList;
     private String mDate;
@@ -44,7 +45,7 @@ public class DateNewsFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_date_news, container, false);
 
         FrameLayout flContent = (FrameLayout) view.findViewById(R.id.fl_content);
-        LoadingPage loadingPage = new LoadingPage(UiUtils.getContext()) {
+        mLoadingPage = new LoadingPage(UiUtils.getContext()) {
             @Override
             public View createSuccessView() {
                 return successView();
@@ -56,8 +57,8 @@ public class DateNewsFragment extends Fragment
             }
         };
 
-        loadingPage.show();
-        flContent.addView(loadingPage);
+        mLoadingPage.show();
+        flContent.addView(mLoadingPage);
 
         return view;
     }
@@ -86,6 +87,7 @@ public class DateNewsFragment extends Fragment
                     public void run() {
                         mAdapter.notifyDataChanged(mSimpleNewsList);
                         mSrlLoad.setRefreshing(false);
+                        mLoadingPage.show();
                     }
                 });
             }
@@ -129,6 +131,7 @@ public class DateNewsFragment extends Fragment
     public void setDate(String date) {
         mDate = date;
         if (mAdapter != null) {
+            mSrlLoad.setRefreshing(true);
             onRefresh();
         }
     }

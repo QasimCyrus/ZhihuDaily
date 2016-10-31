@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
 
@@ -234,23 +235,31 @@ public class MainActivity extends BaseActivity {
                 Calendar maxCalendar = Calendar.getInstance();
                 Date maxDate = maxCalendar.getTime();
 
-                final DatePicker datePicker = new DatePicker(this);
+                View view = View.inflate(this, R.layout.item_date_dialog, null);
+                final DatePicker datePicker = (DatePicker) view.findViewById(R.id.date_picker);
+                datePicker.setCalendarViewShown(false);
                 datePicker.setMinDate(minDate.getTime());
                 datePicker.setMaxDate(maxDate.getTime());
 
                 new AlertDialog.Builder(this)
-                        .setView(datePicker)
+                        .setView(view)
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //获得选择的日期
                                 String yyyy = String.valueOf(datePicker.getYear());
+
                                 int month = datePicker.getMonth();
                                 String MM = String.valueOf(month + 1);
                                 if (month < 9) {
                                     MM = "0" + MM;
                                 }
-                                String dd = String.valueOf(datePicker.getDayOfMonth());
+
+                                int day = datePicker.getDayOfMonth();
+                                String dd = String.valueOf(day);
+                                if (day < 10) {
+                                    dd = "0" + dd;
+                                }
 
                                 String pickDate = yyyy + MM + dd;
                                 String title = yyyy + "年" + MM + "月" + dd + "日";
