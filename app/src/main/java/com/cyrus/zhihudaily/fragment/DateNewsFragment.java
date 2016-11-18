@@ -135,4 +135,11 @@ public class DateNewsFragment extends Fragment
             onRefresh();
         }
     }
+
+    public void updateTheme() {
+        if (mAdapter != null) {
+            mAdapter.updateTheme();
+        }
+    }
+
 }

@@ -13,7 +13,7 @@ import com.cyrus.zhihudaily.activity.NewsDetailActivity;
 import com.cyrus.zhihudaily.constants.DataConstant;
 import com.cyrus.zhihudaily.models.SimpleStory;
 import com.cyrus.zhihudaily.models.TopStory;
-import com.cyrus.zhihudaily.utils.LoadImageUtils;
+import com.cyrus.zhihudaily.utils.ImageUtils;
 import com.cyrus.zhihudaily.utils.UiUtils;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class HeaderImageAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return mTopStories.size();
+        return Integer.MAX_VALUE;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class HeaderImageAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 SimpleStory simpleStory = new SimpleStory();
-                TopStory topStory = mTopStories.get(position);
+                TopStory topStory = mTopStories.get(position % 5);
 
                 simpleStory.setId(topStory.getId());
                 simpleStory.setTitle(topStory.getTitle());
@@ -62,10 +62,10 @@ public class HeaderImageAdapter extends PagerAdapter {
         });
         ImageView imageView = (ImageView) view.findViewById(R.id.iv_show);
         TextView textView = (TextView) view.findViewById(R.id.tv_show);
-        TopStory topStory = mTopStories.get(position);
+        TopStory topStory = mTopStories.get(position % 5);
 
         textView.setText(topStory.getTitle());
-        LoadImageUtils.loadImage(topStory.getImage(), imageView);
+        ImageUtils.loadImage(topStory.getImage(), imageView);
         container.addView(view);
 
         return view;

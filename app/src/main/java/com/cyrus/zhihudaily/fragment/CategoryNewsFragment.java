@@ -67,13 +67,15 @@ public class CategoryNewsFragment extends Fragment
 
     private View successView() {
         View view = View.inflate(UiUtils.getContext(), R.layout.page_success, null);
-        mSrlLoad = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
-        RecyclerView rvNews = (RecyclerView) view.findViewById(R.id.rv_news_list);
 
+        mSrlLoad = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        mSrlLoad.setOnRefreshListener(this);
+
+        RecyclerView rvNews = (RecyclerView) view.findViewById(R.id.rv_news_list);
         rvNews.setLayoutManager(new LinearLayoutManager(getContext()));
+
         mAdapter = new SimpleStoryAdapter(getContext(), mSimpleNewsList);
         rvNews.setAdapter(mAdapter);
-        mSrlLoad.setOnRefreshListener(this);
 
         return view;
     }
@@ -135,6 +137,12 @@ public class CategoryNewsFragment extends Fragment
         if (mAdapter != null) {
             mSrlLoad.setRefreshing(true);
             onRefresh();
+        }
+    }
+
+    public void updateTheme() {
+        if (mAdapter != null) {
+            mAdapter.updateTheme();
         }
     }
 

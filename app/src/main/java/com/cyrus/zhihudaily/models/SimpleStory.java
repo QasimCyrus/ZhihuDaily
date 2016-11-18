@@ -42,4 +42,13 @@ public class SimpleStory implements Serializable {
     public void setImages(ArrayList<String> images) {
         mImages = images;
     }
+
+    @Override
+    public String toString() {
+        return "SimpleStory{" +
+                "mId='" + mId + '\'' +
+                ", mTitle='" + mTitle + '\'' +
+                ", mImages=" + mImages +
+                '}';
+    }
 }

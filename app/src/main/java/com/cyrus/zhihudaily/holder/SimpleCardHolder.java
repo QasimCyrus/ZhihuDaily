@@ -14,13 +14,13 @@ import com.cyrus.zhihudaily.R;
  * Created by Cyrus on 2016/10/16.
  */
 
-public class FavoriteCardHolder extends RecyclerView.ViewHolder{
+public class SimpleCardHolder extends RecyclerView.ViewHolder{
 
     private CardView mCardView;
     private TextView mTvTitle;
     private ImageView mIvTitle;
 
-    public FavoriteCardHolder(View itemView) {
+    public SimpleCardHolder(View itemView) {
         super(itemView);
 
         mCardView = (CardView) itemView.findViewById(R.id.cv_news_item);

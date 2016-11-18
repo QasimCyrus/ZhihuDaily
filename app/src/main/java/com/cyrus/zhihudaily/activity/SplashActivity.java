@@ -12,11 +12,11 @@ import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.constants.GlobalConstant;
 import com.cyrus.zhihudaily.manager.ThreadManager;
 import com.cyrus.zhihudaily.models.SplashInfo;
-import com.cyrus.zhihudaily.utils.LoadImageUtils;
+import com.cyrus.zhihudaily.utils.ImageUtils;
 import com.cyrus.zhihudaily.utils.NetUtils;
 import com.google.gson.Gson;
 
-import static com.cyrus.zhihudaily.constants.SharePreferenceConstant.FIRST_LAUNCH;
+import static com.cyrus.zhihudaily.constants.SharePreferenceConstant.IS_FIRST_LAUNCH;
 
 public class SplashActivity extends BaseActivity {
 
@@ -33,7 +33,7 @@ public class SplashActivity extends BaseActivity {
         setContentView(R.layout.activity_splash);
 
         mSp = getBaseApplication().getSp();
-        mIsFirstLoad = mSp.getBoolean(FIRST_LAUNCH, true);
+        mIsFirstLoad = mSp.getBoolean(IS_FIRST_LAUNCH, true);
 
         initView();
         getData();
@@ -65,7 +65,7 @@ public class SplashActivity extends BaseActivity {
 
             mDurationTime = 3000;
             mIsFirstLoad = false;
-            mSp.edit().putBoolean(FIRST_LAUNCH, mIsFirstLoad).apply();
+            mSp.edit().putBoolean(IS_FIRST_LAUNCH, mIsFirstLoad).apply();
         } else {
             mDurationTime = 1500;
             setDefaultView();
@@ -75,7 +75,7 @@ public class SplashActivity extends BaseActivity {
     private void setData(String data) {
         if (data != null) {
             SplashInfo splashInfo = new Gson().fromJson(data, SplashInfo.class);
-            LoadImageUtils.loadImage(splashInfo.getImg(), mIvSplash);
+            ImageUtils.loadImage(splashInfo.getImg(), mIvSplash);
             mTvTitle.setText(splashInfo.getText());
         } else {
             setDefaultView();

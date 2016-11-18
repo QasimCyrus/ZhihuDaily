@@ -12,7 +12,7 @@ import java.util.List;
  * Created by Cyrus on 2016/10/15.
  */
 
-public class NetNewsData {
+public class NewsDetailData {
 
     @SerializedName("body")
     @Expose
@@ -134,5 +134,22 @@ public class NetNewsData {
 
     public void setCss(List<String> css) {
         this.css = css;
+    }
+
+    @Override
+    public String toString() {
+        return "NewsDetailData{" +
+                "body='" + body + '\'' +
+                ", imageSource='" + imageSource + '\'' +
+                ", title='" + title + '\'' +
+                ", image='" + image + '\'' +
+                ", shareUrl='" + shareUrl + '\'' +
+                ", js=" + js +
+                ", gaPrefix='" + gaPrefix + '\'' +
+                ", images=" + images +
+                ", type=" + type +
+                ", id=" + id +
+                ", css=" + css +
+                '}';
     }
 }

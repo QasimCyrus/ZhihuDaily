@@ -11,13 +11,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cyrus.zhihudaily.BaseActivity;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.activity.NewsDetailActivity;
 import com.cyrus.zhihudaily.constants.DataConstant;
 import com.cyrus.zhihudaily.constants.SharePreferenceConstant;
-import com.cyrus.zhihudaily.holder.FavoriteCardHolder;
+import com.cyrus.zhihudaily.holder.SimpleCardHolder;
 import com.cyrus.zhihudaily.models.SimpleStory;
-import com.cyrus.zhihudaily.utils.LoadImageUtils;
+import com.cyrus.zhihudaily.utils.ImageUtils;
 import com.cyrus.zhihudaily.utils.UiUtils;
 import com.google.gson.Gson;
 
@@ -48,6 +49,10 @@ public class SimpleStoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
      * 新闻首选项
      */
     private SharedPreferences mNewsSp;
+    /**
+     * 判断当前是夜间模式还是日间模式，true为夜间模式
+     */
+    private boolean mIsNightMode;
 
     public SimpleStoryAdapter(Context context, List<String> storiesString) {
         mContext = context;
@@ -55,17 +60,20 @@ public class SimpleStoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         parseJson();
         mNewsSp = UiUtils.getContext().getSharedPreferences(SharePreferenceConstant
                 .NEWS_PREFERENCE_NAME, Context.MODE_PRIVATE);
+        mIsNightMode = UiUtils.getContext().getSharedPreferences(SharePreferenceConstant
+                .PREFERENCE_NAME, Context.MODE_PRIVATE)
+                .getBoolean(SharePreferenceConstant.IS_NIGHT_MODE, false);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new FavoriteCardHolder(View.inflate(UiUtils.getContext(),
+        return new SimpleCardHolder(View.inflate(UiUtils.getContext(),
                 R.layout.item_news_card, null));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        FavoriteCardHolder favCardHolder = (FavoriteCardHolder) holder;
+        SimpleCardHolder favCardHolder = (SimpleCardHolder) holder;
         final SimpleStory simpleStory = mStories.get(position);
         CardView cvItem = favCardHolder.getCardView();
         final TextView tvTitle = favCardHolder.getTvTitle();
@@ -73,21 +81,32 @@ public class SimpleStoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         //设置卡片标题
         tvTitle.setText(simpleStory.getTitle());
-        tvTitle.setTextColor(mNewsSp.getBoolean(simpleStory.getId(), false)
-                ? Color.GRAY : Color.BLACK);
+        if (mIsNightMode) {
+            tvTitle.setTextColor(mNewsSp.getBoolean(simpleStory.getId(), false)
+                    ? 0xFFBBBBBB
+                    : 0xEEDDDDDD);
+        } else {
+            tvTitle.setTextColor(mNewsSp.getBoolean(simpleStory.getId(), false)
+                    ? Color.GRAY
+                    : Color.BLACK);
+        }
         //设置卡片图片
         ArrayList<String> images = simpleStory.getImages();
         if (images != null) {
-            LoadImageUtils.loadImage(simpleStory.getImages().get(0), ivTitle);
+            ImageUtils.loadImage(simpleStory.getImages().get(0), ivTitle);
         } else {
             ivTitle.setImageResource(R.drawable.ic_empty_page);
         }
-        //设置卡片点击效果和点击事件
-        cvItem.setBackgroundResource(R.drawable.btn_bg);
+        //设置卡片点击效果和相应事件
+        cvItem.setBackgroundResource(mIsNightMode
+                ? R.drawable.card_bg_night
+                : R.drawable.card_bg_light);
         cvItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tvTitle.setTextColor(Color.GRAY);
+                tvTitle.setTextColor(mIsNightMode
+                        ? 0xFFBBBBBB
+                        : Color.GRAY);
                 mNewsSp.edit().putBoolean(simpleStory.getId(), true).apply();
 
                 Intent intent = new Intent(UiUtils.getContext(), NewsDetailActivity.class);
@@ -151,7 +170,15 @@ public class SimpleStoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
      */
     public void notifyDataChanged(List<String> newStoriesString) {
         mStoriesString = newStoriesString;
-        parseJson();//关键语句，否则更新视图会错位
+        parseJson();//关键语句，否则更新视图会错位。更新数据的关键是mStories而不是mStoriesString
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 更新夜间模式切换之后的视图
+     */
+    public void updateTheme() {
+        mIsNightMode = ((BaseActivity) mContext).isNightMode();
         notifyDataSetChanged();
     }
 

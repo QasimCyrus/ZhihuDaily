@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -43,6 +44,7 @@ public class MainActivity extends BaseActivity {
     private CategoryNewsFragment mCategoryNewsFragment;
     private DateNewsFragment mDateNewsFragment;
     private long mFirstPressBackTime;
+    private FragmentManager mFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,21 +52,25 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         initView();
-        initHomeFragment();
         initData();
+        initHomeFragment();
+        updateTheme();
     }
 
     private void initData() {
         setSupportActionBar(mToolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDlMenu, mToolbar,
                 R.string.drawer_open, R.string.drawer_close);
-        toggle.syncState();
+        toggle.syncState();//抽屉按键的动画效果
         mDlMenu.addDrawerListener(toggle);
+        mFragmentManager = getSupportFragmentManager();
         initNavigation();
     }
 
+    /**
+     * 初始化抽屉内容
+     */
     private void initNavigation() {
-        mNvDrawer.setItemBackgroundResource(R.drawable.menu_item_bg);
         mNvDrawer.setNavigationItemSelectedListener(new NavigationView
                 .OnNavigationItemSelectedListener() {
             @Override
@@ -124,14 +130,14 @@ public class MainActivity extends BaseActivity {
     /**
      * 设置分类新闻的界面
      *
-     * @param id 分类新闻的主题
+     * @param id    分类新闻的主题
      * @param title 分类新闻界面的标题
      */
     private void setCategoryFragment(String id, String title) {
         mToolbar.setTitle(title);
         mCategoryNewsFragment.setThemeId(id);
 
-        getSupportFragmentManager().beginTransaction()
+        mFragmentManager.beginTransaction()
                 .replace(R.id.fl_content, mCategoryNewsFragment)
                 .commit();
     }
@@ -139,14 +145,14 @@ public class MainActivity extends BaseActivity {
     /**
      * 设置某个日期的新闻的界面
      *
-     * @param date 要查看新闻的日期
+     * @param date  要查看新闻的日期
      * @param title 某个日期的新闻界面的标题
      */
     private void setDateNewsFragment(String date, String title) {
         mToolbar.setTitle(title);
         mDateNewsFragment.setDate(date);
 
-        getSupportFragmentManager().beginTransaction()
+        mFragmentManager.beginTransaction()
                 .replace(R.id.fl_content, mDateNewsFragment)
                 .commit();
     }
@@ -184,7 +190,7 @@ public class MainActivity extends BaseActivity {
 
     private void initHomeFragment() {
         mToolbar.setTitle(R.string.navigation_home);
-        getSupportFragmentManager().beginTransaction()
+        mFragmentManager.beginTransaction()
                 .replace(R.id.fl_content, mHomeNewsFragment)
                 .commit();
     }
@@ -217,6 +223,12 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        menu.getItem(1).setIcon(isNightMode()
+                ? R.drawable.ic_light_theme
+                : R.drawable.ic_night_theme);
+        menu.getItem(1).setTitle(isNightMode()
+                ? R.string.light_mode
+                : R.string.night_mode);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -270,14 +282,30 @@ public class MainActivity extends BaseActivity {
                         .setNegativeButton("取消", null)
                         .show();
                 return true;
-            case R.id.menu_item_clear_cache://清除缓存
+            case R.id.menu_item_day_or_night_mode:// 切换夜间模式
+                setNightMode(!isNightMode());
+                item.setTitle(isNightMode()
+                        ? R.string.light_mode
+                        : R.string.night_mode);
+                item.setIcon(isNightMode()
+                        ? R.drawable.ic_light_theme
+                        : R.drawable.ic_night_theme);
+                updateTheme();
+                break;
+            case R.id.menu_item_clear_cache:// 清除缓存
                 ThreadManager.getInstance().createLongPool().execute(new Runnable() {
                     @Override
                     public void run() {
                         //清除SharePreference缓存
-                        getBaseApplication().getSp().edit().clear().apply();
+                        boolean isNightMode = isNightMode();
+                        getBaseApplication().getSp().edit()
+                                .clear()
+                                .putBoolean(SharePreferenceConstant.IS_NIGHT_MODE, isNightMode)
+                                .apply();
                         getSharedPreferences(SharePreferenceConstant
-                                .NEWS_PREFERENCE_NAME, MODE_PRIVATE).edit().clear().apply();
+                                .NEWS_PREFERENCE_NAME, MODE_PRIVATE).edit()
+                                .clear()
+                                .apply();
 
                         //清除数据库缓存
                         new NewsDB().deleteAll();
@@ -295,8 +323,9 @@ public class MainActivity extends BaseActivity {
                             public void run() {
                                 mHomeNewsFragment.onRefresh();
                                 Snackbar.make(mFlHomeContent,
-                                        isSuccessful ? "清除缓存成功" : "清除缓存失败或无缓存",
+                                        isSuccessful ? "清除缓存成功" : "清除缓存失败或无网页缓存",
                                         Snackbar.LENGTH_SHORT).show();
+                                updateTheme();
                             }
                         });
                     }
@@ -307,6 +336,26 @@ public class MainActivity extends BaseActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateTheme() {
+        mToolbar.setBackgroundResource(isNightMode()
+                ? R.color.colorGrayBlack
+                : R.color.colorPrimary);
+        mDlMenu.setBackgroundResource(isNightMode()
+                ? R.color.colorDarkGray
+                : R.color.colorWhite);
+        mNvDrawer.setBackgroundResource(isNightMode()
+                ? R.color.colorGray
+                : R.color.colorWhite);
+        mNvDrawer.setItemBackgroundResource(isNightMode()
+                ? R.drawable.menu_item_bg_night
+                : R.drawable.menu_item_bg_light);
+        mHomeNewsFragment.updateTheme();
+        mCategoryNewsFragment.updateTheme();
+        mDateNewsFragment.updateTheme();
+        //TODO 夜间模式抽屉字体的颜色
+//        mNvDrawer.setItemTextColor(new ColorStateList(new int[][]{}, new int[]{Color.WHITE}));
     }
 
     /**

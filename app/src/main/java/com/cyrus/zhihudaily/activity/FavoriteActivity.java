@@ -1,5 +1,6 @@
 package com.cyrus.zhihudaily.activity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +33,16 @@ public class FavoriteActivity extends BaseActivity {
 
         initView();
         initToolbar();
+        updateTheme();
+    }
+
+    private void updateTheme() {
+        mToolbar.setBackgroundResource(isNightMode()
+                ? R.color.colorGrayBlack
+                : R.color.colorPrimary);
+        mRvFavorites.setBackgroundResource(isNightMode()
+                ? R.color.colorDarkGray
+                : R.color.colorWhite);
     }
 
     private void initToolbar() {
@@ -79,9 +90,16 @@ public class FavoriteActivity extends BaseActivity {
                 } else {
                     mAdapter.setDataAndNotify(favorites);
                 }
-            }else {
+            } else {
                 mRvFavorites.setVisibility(GONE);
                 mTvTip.setVisibility(VISIBLE);
+                mTvTip.setBackgroundResource(isNightMode()
+                        ? R.color.colorDarkGray
+                        : R.color.colorWhite);
+                mTvTip.setTextColor(isNightMode()
+                        ? Color.GRAY
+                        : Color.BLACK);
+
             }
         }
     }

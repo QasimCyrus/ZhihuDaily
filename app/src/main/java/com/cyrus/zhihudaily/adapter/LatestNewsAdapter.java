@@ -14,18 +14,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cyrus.zhihudaily.BaseActivity;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.activity.NewsDetailActivity;
 import com.cyrus.zhihudaily.constants.DataConstant;
 import com.cyrus.zhihudaily.constants.SharePreferenceConstant;
 import com.cyrus.zhihudaily.holder.CardHolder;
 import com.cyrus.zhihudaily.holder.HeaderHolder;
-import com.cyrus.zhihudaily.models.SimpleStory;
 import com.cyrus.zhihudaily.models.LatestNewsData;
+import com.cyrus.zhihudaily.models.SimpleStory;
 import com.cyrus.zhihudaily.models.Story;
 import com.cyrus.zhihudaily.models.TopStory;
 import com.cyrus.zhihudaily.utils.DateUtils;
-import com.cyrus.zhihudaily.utils.LoadImageUtils;
+import com.cyrus.zhihudaily.utils.ImageUtils;
 import com.cyrus.zhihudaily.utils.UiUtils;
 
 import java.util.ArrayList;
@@ -35,12 +36,12 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 /**
- * 新闻列表适配器
+ * 最新新闻的列表适配器
  * <p>
  * Created by Cyrus on 2016/10/12.
  */
 
-public class NewsAdapter
+public class LatestNewsAdapter
         extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements ViewPager.OnPageChangeListener {
 
@@ -57,6 +58,10 @@ public class NewsAdapter
      * 上下文
      */
     private Context mContext;
+    /**
+     * 判断当前是夜间模式还是日间模式，true为夜间模式
+     */
+    private boolean mIsNightMode;
     /**
      * 新闻结构体
      */
@@ -92,7 +97,7 @@ public class NewsAdapter
     private ViewPager mHeaderPager;
     private ImageView mIvsGuideSpots[];
 
-    public NewsAdapter(Context context, LatestNewsData newsData) {
+    public LatestNewsAdapter(Context context, LatestNewsData newsData) {
         mContext = context;
         mNewsData = newsData;
         mTopStories = mNewsData.getTop_stories();
@@ -100,6 +105,10 @@ public class NewsAdapter
         mStories.add(0, null);
         mNewsSp = UiUtils.getContext().getSharedPreferences(SharePreferenceConstant
                 .NEWS_PREFERENCE_NAME, Context.MODE_PRIVATE);
+        mIsNightMode = UiUtils.getContext().getSharedPreferences(SharePreferenceConstant
+                .PREFERENCE_NAME, Context.MODE_PRIVATE)
+                .getBoolean(SharePreferenceConstant.IS_NIGHT_MODE, false);
+        mCurrentTopItem = Integer.MAX_VALUE / 2 - 3;
     }
 
     @Override
@@ -158,16 +167,27 @@ public class NewsAdapter
                 cvItem.setVisibility(VISIBLE);
                 //设置卡片标题
                 tvTitle.setText(story.getTitle());
-                tvTitle.setTextColor(mNewsSp.getBoolean(story.getId(), false)
-                        ? Color.GRAY : Color.BLACK);//已点击过则显示灰色，未点击显示黑色
+                if (mIsNightMode) {
+                    tvTitle.setTextColor(mNewsSp.getBoolean(story.getId(), false)
+                            ? 0xFFBBBBBE
+                            : 0xEEDDDDDD);
+                } else {
+                    tvTitle.setTextColor(mNewsSp.getBoolean(story.getId(), false)
+                            ? Color.GRAY
+                            : Color.BLACK);
+                }
                 //设置卡片图片
-                LoadImageUtils.loadImage(story.getImages().get(0), ivTitle);
-                //设置卡片点击效果和响应事件
-                cvItem.setBackgroundResource(R.drawable.btn_bg);
+                ImageUtils.loadImage(story.getImages().get(0), ivTitle);
+                //设置卡片点击效果和事件（点击效果在xml文件里设置没有作用？）
+                cvItem.setBackgroundResource(mIsNightMode
+                        ? R.drawable.card_bg_night
+                        : R.drawable.card_bg_light);
                 cvItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        tvTitle.setTextColor(Color.GRAY);
+                        tvTitle.setTextColor(mIsNightMode
+                                ? 0xFFBBBBBB
+                                : Color.GRAY);
                         mNewsSp.edit().putBoolean(story.getId(), true).apply();//记录已点击
 
                         SimpleStory simpleStory = new SimpleStory();
@@ -186,7 +206,10 @@ public class NewsAdapter
             } else {
                 cvItem.setVisibility(GONE);
                 tvTime.setVisibility(VISIBLE);
-                if (position == 1) {
+                tvTime.setTextColor(mIsNightMode
+                        ? 0xEEDDDDDD
+                        : Color.BLACK);
+                if (position == 1) {//position为0是TopStory，从position为1开始是Story
                     tvTime.setText(R.string.news_list_today);
                 } else {
                     tvTime.setText(DateUtils.convertDate(mStories.get(position).getDate()));
@@ -213,7 +236,7 @@ public class NewsAdapter
     public void onPageSelected(int position) {
         //根据当前头条的不同设置引导点的状态
         for (int i = 0; i < mIvsGuideSpots.length; i++) {
-            if (i == position) {
+            if (i == position % 5) {
                 mIvsGuideSpots[i].setImageResource(R.drawable.guide_point_selected);
             } else {
                 mIvsGuideSpots[i].setImageResource(R.drawable.guide_point);
@@ -225,6 +248,11 @@ public class NewsAdapter
     public void onPageScrollStateChanged(int state) {
     }
 
+    /**
+     * RecyclerView上拉加载更多时，添加数据的方法
+     *
+     * @param stories 加载更多获得的新闻
+     */
     public void addItem(ArrayList<Story> stories) {
         int beforeSize = mStories.size();
         mStories.add(null);
@@ -232,11 +260,24 @@ public class NewsAdapter
         notifyItemRangeInserted(beforeSize + 1, stories.size());
     }
 
+    /**
+     * 设置当前适配器中的新闻数据
+     *
+     * @param newsData 最新的新闻数据
+     */
     public void setNewsData(LatestNewsData newsData) {
         mNewsData = newsData;
         mTopStories = mNewsData.getTop_stories();
         mStories = mNewsData.getStories();
         mStories.add(0, null);
+    }
+
+    /**
+     * 更新夜间模式切换之后的视图
+     */
+    public void updateTheme() {
+        mIsNightMode = ((BaseActivity) mContext).isNightMode();
+        notifyDataSetChanged();
     }
 
     /**
@@ -248,7 +289,7 @@ public class NewsAdapter
             if (mIsRecycle) {
                 UiUtils.cancel(this);//先取消循环的执行
                 mCurrentTopItem = mHeaderPager.getCurrentItem();
-                mCurrentTopItem = ++mCurrentTopItem % 5;
+                mCurrentTopItem = ++mCurrentTopItem;
                 mHeaderPager.setCurrentItem(mCurrentTopItem);
                 UiUtils.postDelayed(this, 4000);//设置完位置再重新执行循环
             }

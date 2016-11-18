@@ -12,6 +12,7 @@
         <item name="colorControlNormal">@android:color/white</item>
         <item name="android:itemBackground">@android:color/white</item>
         <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
     </style>
 
 </resources>

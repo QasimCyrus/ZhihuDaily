@@ -11,8 +11,4 @@ public class DataConstant {
      * Intent存放新闻详细数据的key
      */
     public static final String INTENT_NEWS = "news_detail";
-    /**
-     * Bundle存放分类新闻主题id的key
-     */
-    public static final String BUNDLE_THEME_ID = "theme_id";
 }

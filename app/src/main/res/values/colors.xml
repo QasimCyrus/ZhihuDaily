@@ -3,6 +3,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorGray">#888888</color>
+    <color name="colorDarkGray">#444444</color>
+    <color name="colorGrayWhite">#BBBBBB</color>
+    <color name="colorGrayBlack">#333333</color>
     <color name="colorTransparentWhite">#11FFFFFF</color>
-    <color name="colorItemClick">#ABCDEF</color>
+    <color name="colorMenuItemClick_Night">#456789</color>
+    <color name="colorMenuItemClick_Light">#ABCDEF</color>
 </resources>

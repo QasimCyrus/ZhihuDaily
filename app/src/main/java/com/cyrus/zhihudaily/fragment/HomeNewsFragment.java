@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.cyrus.zhihudaily.R;
-import com.cyrus.zhihudaily.adapter.NewsAdapter;
+import com.cyrus.zhihudaily.adapter.LatestNewsAdapter;
 import com.cyrus.zhihudaily.constants.GlobalConstant;
 import com.cyrus.zhihudaily.manager.ThreadManager;
 import com.cyrus.zhihudaily.models.LatestNewsData;
@@ -47,10 +47,13 @@ public class HomeNewsFragment extends Fragment
      * 用于判断当前上拉时是否在加载数据
      */
     private boolean mIsLoading;
+    /**
+     * 新闻适配器
+     */
+    private LatestNewsAdapter mNewsAdapter;
 
     private FrameLayout mFlContent;
     private SwipeRefreshLayout mSrlLoad;
-    private NewsAdapter mNewsAdapter;
     private LinearLayoutManager mLlManager;
 
     @Nullable
@@ -83,12 +86,16 @@ public class HomeNewsFragment extends Fragment
         View view = View.inflate(UiUtils.getContext(), R.layout.page_success, null);
 
         mSrlLoad = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        mSrlLoad.setOnRefreshListener(this);
+
         RecyclerView rvNews = (RecyclerView) view.findViewById(R.id.rv_news_list);
+
         mLlManager = new LinearLayoutManager(UiUtils.getContext());
         rvNews.setLayoutManager(mLlManager);
-        mNewsAdapter = new NewsAdapter(getContext(), mNewsData);
+
+        mNewsAdapter = new LatestNewsAdapter(getContext(), mNewsData);
         rvNews.setAdapter(mNewsAdapter);
-        mSrlLoad.setOnRefreshListener(this);
+
         rvNews.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -131,6 +138,7 @@ public class HomeNewsFragment extends Fragment
 
             }
         });
+
 
         return view;
     }
@@ -188,5 +196,11 @@ public class HomeNewsFragment extends Fragment
         Snackbar.make(mFlContent, R.string.info_internet_disconnected,
                 Snackbar.LENGTH_SHORT).show();
         mSrlLoad.setRefreshing(false);
+    }
+
+    public void updateTheme() {
+        if (mNewsAdapter != null) {
+            mNewsAdapter.updateTheme();
+        }
     }
 }

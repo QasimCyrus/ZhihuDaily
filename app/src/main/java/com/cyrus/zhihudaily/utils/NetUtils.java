@@ -11,7 +11,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * 加载url的工具类
+ * 网络工具类
  * Created by Cyrus on 2016/5/8.
  */
 public class NetUtils {
@@ -30,8 +30,11 @@ public class NetUtils {
             try {
                 Response response = mOkHttpClient.newCall(request).execute();
                 if (response.isSuccessful()) {
-                    return response.body().string();
+                    String result = response.body().string();
+                    response.close();
+                    return result;
                 } else {
+                    response.close();
                     return null;
                 }
             } catch (IOException e) {
@@ -53,6 +56,18 @@ public class NetUtils {
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = manager.getActiveNetworkInfo();
         return info != null && info.isConnectedOrConnecting();
+    }
+
+    /**
+     * 判断当前是否为wifi连接
+     *
+     * @return 如果当前是wifi连接，则返回true
+     */
+    public static boolean isWifi() {
+        ConnectivityManager manager = (ConnectivityManager) UiUtils.getContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        return info != null && info.getType() == ConnectivityManager.TYPE_WIFI;
     }
 
 }
