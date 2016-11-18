@@ -1,6 +1,8 @@
 package com.cyrus.zhihudaily.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ import com.cyrus.zhihudaily.models.NewsDetailData;
 import com.cyrus.zhihudaily.models.SimpleStory;
 import com.cyrus.zhihudaily.utils.ImageUtils;
 import com.cyrus.zhihudaily.utils.NetUtils;
+import com.cyrus.zhihudaily.utils.PermissionsChecker;
 import com.cyrus.zhihudaily.utils.UiUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -68,6 +71,10 @@ public class NewsDetailActivity extends BaseActivity {
      * 判断是否按回退键时需要后退
      */
     private boolean mShouldGoBack;
+    /**
+     * 判断当前应用是否被授予操作存储空间的权限
+     */
+    private boolean mCanWriteExternalStorage;
 
     private Toolbar mToolbar;
     private WebView mWvContent;
@@ -281,6 +288,13 @@ public class NewsDetailActivity extends BaseActivity {
                 .OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getTitle() == "保存到手机") {
+                    checkExternalStoragePermission();
+                    if (!mCanWriteExternalStorage) {
+                        Snackbar.make(mWvContent, "当前无操作存储空间的的权限",
+                                Snackbar.LENGTH_SHORT).show();
+                        return true;
+                    }
+
                     if (NetUtils.isNetConnectedOrConnecting()) {
                         ThreadManager.getInstance().createLongPool().execute(new Runnable() {
                             @Override
@@ -318,6 +332,35 @@ public class NewsDetailActivity extends BaseActivity {
                     menu.add(Menu.NONE, v.getId(), Menu.NONE, "保存到手机")
                             .setOnMenuItemClickListener(onMenuItemClickListener);
                 }
+            }
+        }
+    }
+
+    /**
+     * 检查应用是否已经被授予读写SD卡权限，判断结果存放在全局变量mCanWriteExternalStorage中
+     */
+    private void checkExternalStoragePermission() {
+        PermissionsChecker checker = new PermissionsChecker(this);
+        if (checker.lacksPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            mCanWriteExternalStorage = false;
+            Intent intent = new Intent(this, PermissionsActivity.class);
+            intent.putExtra(PermissionsActivity.EXTRA_EXTERNAL,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE});
+            startActivityForResult(intent, PermissionsActivity.PERMISSIONS_REQUEST_CODE);
+        } else {
+            mCanWriteExternalStorage = true;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PermissionsActivity.PERMISSIONS_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                mCanWriteExternalStorage = true;
+            } else if (resultCode == RESULT_CANCELED) {
+                mCanWriteExternalStorage = false;
             }
         }
     }

@@ -30,6 +30,7 @@
         </activity>
         <activity android:name=".activity.FavoriteActivity"/>
         <activity android:name=".activity.AboutActivity"/>
+        <activity android:name=".activity.PermissionsActivity"/>
     </application>
 
 </manifest>
