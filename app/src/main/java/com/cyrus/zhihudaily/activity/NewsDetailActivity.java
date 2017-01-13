@@ -167,13 +167,8 @@ public class NewsDetailActivity extends BaseActivity {
         final SimpleStory simpleStory = (SimpleStory) getIntent()
                 .getSerializableExtra(DataConstant.INTENT_NEWS);
         mNewsId = simpleStory.getId();
-        ThreadManager.getInstance().createLongPool().execute(new Runnable() {
-            @Override
-            public void run() {
-                mIsFavorite = mFavDB.find(mNewsId);
-                mDetailJson = mDetailDB.find(mNewsId);
-            }
-        });
+        mIsFavorite = mFavDB.find(mNewsId);
+        mDetailJson = mDetailDB.find(mNewsId);
 
         //工具栏设置
         mToolbar.setTitle(simpleStory.getTitle());//设置标题要放在setSupportActionBar之前
@@ -400,11 +395,13 @@ public class NewsDetailActivity extends BaseActivity {
             // 阻塞图片加载，网页加载完毕再进行图片加载
             view.getSettings().setBlockNetworkImage(true);
 
-            MenuItem menuItem_favorite = mToolbar.getMenu().getItem(1);
-            if ("x-data://base".equals(url)) {
-                menuItem_favorite.setVisible(true);
-            } else {
-                menuItem_favorite.setVisible(false);
+            if (NetUtils.isNetConnectedOrConnecting()) {
+                MenuItem menuItem_favorite = mToolbar.getMenu().getItem(1);
+                if ("x-data://base".equals(url)) {
+                    menuItem_favorite.setVisible(true);
+                } else {
+                    menuItem_favorite.setVisible(false);
+                }
             }
         }
 

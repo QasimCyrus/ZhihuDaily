@@ -1,0 +1,107 @@
+{
+    "android_gradle_plugin_version": "2.2.3",
+    "apk_path": "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\build\\outputs\\apk\\app-debug.apk",
+    "apt": {
+        
+    },
+    "apt_libraries": {
+        "dagger": false,
+        "butterknife": false
+    },
+    "auto_dependency": true,
+    "build_cache_dir": "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\build\\freeline",
+    "build_directory": "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\build",
+    "build_script": "gradlew.bat :app:assembleDebug",
+    "build_script_work_directory": "",
+    "build_tools_directory": "F:\\Java\\Android\\sdk\\build-tools\\25.0.2",
+    "build_tools_version": "25.0.2",
+    "compile_sdk_directory": "F:\\Java\\Android\\sdk\\platforms\\android-25",
+    "compile_sdk_version": "android-25",
+    "databinding": [
+        
+    ],
+    "databinding_compiler_jar": "",
+    "databinding_modules": [
+        
+    ],
+    "debug_package": "com.cyrus.zhihudaily",
+    "exclude_dep_res_paths": [
+        
+    ],
+    "extra_dep_res_paths": [
+        
+    ],
+    "freeline_cache_dir": "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily",
+    "freeline_gradle_plugin_version": "0.8.3",
+    "java_home": "C:\\Program Files\\Java\\jdk1.8.0_92",
+    "launcher": "com.cyrus.zhihudaily.activity.SplashActivity",
+    "main_assets_directory": [
+        "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\debug\\assets",
+        "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\main\\assets"
+    ],
+    "main_jniLibs_directory": [
+        "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\debug\\jniLibs",
+        "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\main\\jniLibs"
+    ],
+    "main_jni_directory": [
+        "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\debug\\jni",
+        "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\main\\jni"
+    ],
+    "main_manifest_path": "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\main\\AndroidManifest.xml",
+    "main_project_dir": "app",
+    "main_project_name": "app",
+    "main_r_path": "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\build\\generated\\source\\r\\debug\\R.java",
+    "main_res_directory": [
+        "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\debug\\res",
+        "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\main\\res"
+    ],
+    "main_src_directory": [
+        "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\debug\\java",
+        "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\main\\java"
+    ],
+    "module_dependencies": {
+        "app": [
+            
+        ]
+    },
+    "modules": [
+        {
+            "name": "app",
+            "path": "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app"
+        }
+    ],
+    "package": "com.cyrus.zhihudaily",
+    "product_flavor": "",
+    "project_source_sets": {
+        "app": {
+            "main_assets_directory": [
+                "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\debug\\assets",
+                "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\main\\assets"
+            ],
+            "main_jniLibs_directory": [
+                "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\debug\\jniLibs",
+                "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\main\\jniLibs"
+            ],
+            "main_jni_directory": [
+                "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\debug\\jni",
+                "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\main\\jni"
+            ],
+            "main_manifest_path": "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\main\\AndroidManifest.xml",
+            "main_res_directory": [
+                "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\debug\\res",
+                "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\main\\res"
+            ],
+            "main_src_directory": [
+                "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\debug\\java",
+                "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\main\\java"
+            ]
+        }
+    },
+    "project_type": "gradle",
+    "retrolambda": {
+        
+    },
+    "root_dir": "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily",
+    "sdk_directory": "F:\\Java\\Android\\sdk",
+    "use_jdk8": true
+}
