@@ -3,6 +3,7 @@ package com.cyrus.zhihudaily.utils;
 import android.os.Environment;
 import android.widget.ImageView;
 
+import com.cyrus.zhihudaily.App;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -31,7 +32,7 @@ public class ImageUtils {
      */
     public static void loadImage(String url, ImageView imageView) {
         if (url != null) {
-            Picasso.with(UiUtils.getContext()).load(url).into(imageView);
+            Picasso.with(App.getAppComponent().getContext()).load(url).into(imageView);
         }
     }
 

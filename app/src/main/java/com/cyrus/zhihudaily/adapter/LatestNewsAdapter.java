@@ -14,11 +14,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cyrus.zhihudaily.BaseActivity;
+import com.cyrus.zhihudaily.App;
+import com.cyrus.zhihudaily.base.BaseActivity;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.activity.NewsDetailActivity;
 import com.cyrus.zhihudaily.constants.DataConstant;
-import com.cyrus.zhihudaily.constants.SharePreferenceConstant;
+import com.cyrus.zhihudaily.constants.PreferenceConstant;
 import com.cyrus.zhihudaily.holder.CardHolder;
 import com.cyrus.zhihudaily.holder.HeaderHolder;
 import com.cyrus.zhihudaily.models.LatestNewsData;
@@ -103,11 +104,11 @@ public class LatestNewsAdapter
         mTopStories = mNewsData.getTop_stories();
         mStories = mNewsData.getStories();
         mStories.add(0, null);
-        mNewsSp = UiUtils.getContext().getSharedPreferences(SharePreferenceConstant
+        mNewsSp = App.getAppComponent().getContext().getSharedPreferences(PreferenceConstant
                 .NEWS_PREFERENCE_NAME, Context.MODE_PRIVATE);
-        mIsNightMode = UiUtils.getContext().getSharedPreferences(SharePreferenceConstant
+        mIsNightMode = App.getAppComponent().getContext().getSharedPreferences(PreferenceConstant
                 .PREFERENCE_NAME, Context.MODE_PRIVATE)
-                .getBoolean(SharePreferenceConstant.IS_NIGHT_MODE, false);
+                .getBoolean(PreferenceConstant.IS_NIGHT_MODE, false);
         mCurrentTopItem = Integer.MAX_VALUE / 2 - 3;
     }
 
@@ -197,7 +198,7 @@ public class LatestNewsAdapter
                         ArrayList<String> images = story.getImages();
                         simpleStory.setImages(images);
 
-                        Intent intent = new Intent(UiUtils.getContext(),
+                        Intent intent = new Intent(App.getAppComponent().getContext(),
                                 NewsDetailActivity.class);
                         intent.putExtra(DataConstant.INTENT_NEWS, simpleStory);
                         mContext.startActivity(intent);

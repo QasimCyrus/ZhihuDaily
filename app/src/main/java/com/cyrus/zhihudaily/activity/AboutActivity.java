@@ -5,7 +5,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.cyrus.zhihudaily.BaseActivity;
+import com.cyrus.zhihudaily.base.BaseActivity;
 import com.cyrus.zhihudaily.R;
 
 public class AboutActivity extends BaseActivity {

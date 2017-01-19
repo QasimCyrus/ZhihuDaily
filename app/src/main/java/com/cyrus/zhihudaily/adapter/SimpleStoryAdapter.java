@@ -11,15 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cyrus.zhihudaily.BaseActivity;
+import com.cyrus.zhihudaily.App;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.activity.NewsDetailActivity;
+import com.cyrus.zhihudaily.base.BaseActivity;
 import com.cyrus.zhihudaily.constants.DataConstant;
-import com.cyrus.zhihudaily.constants.SharePreferenceConstant;
+import com.cyrus.zhihudaily.constants.PreferenceConstant;
 import com.cyrus.zhihudaily.holder.SimpleCardHolder;
 import com.cyrus.zhihudaily.models.SimpleStory;
 import com.cyrus.zhihudaily.utils.ImageUtils;
-import com.cyrus.zhihudaily.utils.UiUtils;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -58,16 +58,15 @@ public class SimpleStoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         mContext = context;
         mStoriesString = storiesString;
         parseJson();
-        mNewsSp = UiUtils.getContext().getSharedPreferences(SharePreferenceConstant
+        mNewsSp = App.getAppComponent().getContext().getSharedPreferences(PreferenceConstant
                 .NEWS_PREFERENCE_NAME, Context.MODE_PRIVATE);
-        mIsNightMode = UiUtils.getContext().getSharedPreferences(SharePreferenceConstant
-                .PREFERENCE_NAME, Context.MODE_PRIVATE)
-                .getBoolean(SharePreferenceConstant.IS_NIGHT_MODE, false);
+        mIsNightMode = App.getAppComponent().getPreference()
+                .getBoolean(PreferenceConstant.IS_NIGHT_MODE, false);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new SimpleCardHolder(View.inflate(UiUtils.getContext(),
+        return new SimpleCardHolder(View.inflate(mContext,
                 R.layout.item_news_card, null));
     }
 
@@ -109,7 +108,7 @@ public class SimpleStoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         : Color.GRAY);
                 mNewsSp.edit().putBoolean(simpleStory.getId(), true).apply();
 
-                Intent intent = new Intent(UiUtils.getContext(), NewsDetailActivity.class);
+                Intent intent = new Intent(mContext, NewsDetailActivity.class);
                 intent.putExtra(DataConstant.INTENT_NEWS, simpleStory);
                 mContext.startActivity(intent);
             }

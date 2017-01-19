@@ -5,8 +5,8 @@
         
     },
     "apt_libraries": {
-        "dagger": false,
-        "butterknife": false
+        "dagger": true,
+        "butterknife": true
     },
     "auto_dependency": true,
     "build_cache_dir": "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\build\\freeline",
@@ -34,7 +34,7 @@
     "freeline_cache_dir": "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily",
     "freeline_gradle_plugin_version": "0.8.3",
     "java_home": "C:\\Program Files\\Java\\jdk1.8.0_92",
-    "launcher": "com.cyrus.zhihudaily.activity.SplashActivity",
+    "launcher": "com.cyrus.zhihudaily.splash.SplashActivity",
     "main_assets_directory": [
         "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\debug\\assets",
         "F:\\Java\\Android\\AndroidStudioProjects\\ZhihuDaily\\app\\src\\main\\assets"

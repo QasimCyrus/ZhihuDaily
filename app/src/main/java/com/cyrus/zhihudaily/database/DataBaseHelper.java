@@ -3,7 +3,7 @@ package com.cyrus.zhihudaily.database;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.cyrus.zhihudaily.utils.UiUtils;
+import com.cyrus.zhihudaily.App;
 
 /**
  * 数据库初始化
@@ -55,7 +55,7 @@ class DataBaseHelper extends SQLiteOpenHelper {
                     ThemeNewsTable.COLUMN_JSON + " text)";
 
     DataBaseHelper() {
-        super(UiUtils.getContext(), DB_NAME, null, VERSION);
+        super(App.getAppComponent().getContext(), DB_NAME, null, VERSION);
     }
 
     @Override

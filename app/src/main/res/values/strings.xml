@@ -40,5 +40,7 @@
     <string name="night_mode">夜间模式</string>
     <string name="light_mode">日间模式</string>
     <string name="refresh">刷新</string>
+    <string name="splash_image">启动页图片</string>
+    <string name="ser_error">服务器错误</string>
 
 </resources>

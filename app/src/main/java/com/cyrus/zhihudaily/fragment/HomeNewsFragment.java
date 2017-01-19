@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.cyrus.zhihudaily.App;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.adapter.LatestNewsAdapter;
 import com.cyrus.zhihudaily.constants.GlobalConstant;
@@ -64,7 +65,7 @@ public class HomeNewsFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_news_list, container, false);
 
         mFlContent = (FrameLayout) view.findViewById(R.id.fl_content);
-        LoadingPage loadingPage = new LoadingPage(UiUtils.getContext()) {
+        LoadingPage loadingPage = new LoadingPage(App.getAppComponent().getContext()) {
             @Override
             public View createSuccessView() {
                 return successView();
@@ -83,14 +84,14 @@ public class HomeNewsFragment extends Fragment
     }
 
     private View successView() {
-        View view = View.inflate(UiUtils.getContext(), R.layout.page_success, null);
+        View view = View.inflate(App.getAppComponent().getContext(), R.layout.page_success, null);
 
         mSrlLoad = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
         mSrlLoad.setOnRefreshListener(this);
 
         RecyclerView rvNews = (RecyclerView) view.findViewById(R.id.rv_news_list);
 
-        mLlManager = new LinearLayoutManager(UiUtils.getContext());
+        mLlManager = new LinearLayoutManager(App.getAppComponent().getContext());
         rvNews.setLayoutManager(mLlManager);
 
         mNewsAdapter = new LatestNewsAdapter(getContext(), mNewsData);

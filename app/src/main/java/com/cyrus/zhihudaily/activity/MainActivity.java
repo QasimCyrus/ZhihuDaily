@@ -18,9 +18,10 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
 
-import com.cyrus.zhihudaily.BaseActivity;
+import com.cyrus.zhihudaily.App;
+import com.cyrus.zhihudaily.base.BaseActivity;
 import com.cyrus.zhihudaily.R;
-import com.cyrus.zhihudaily.constants.SharePreferenceConstant;
+import com.cyrus.zhihudaily.constants.PreferenceConstant;
 import com.cyrus.zhihudaily.database.NewsDB;
 import com.cyrus.zhihudaily.database.NewsDetailDB;
 import com.cyrus.zhihudaily.database.ThemeNewsDB;
@@ -298,11 +299,11 @@ public class MainActivity extends BaseActivity {
                     public void run() {
                         //清除SharePreference缓存
                         boolean isNightMode = isNightMode();
-                        getBaseApplication().getSp().edit()
+                        App.getAppComponent().getPreference().edit()
                                 .clear()
-                                .putBoolean(SharePreferenceConstant.IS_NIGHT_MODE, isNightMode)
+                                .putBoolean(PreferenceConstant.IS_NIGHT_MODE, isNightMode)
                                 .apply();
-                        getSharedPreferences(SharePreferenceConstant
+                        getSharedPreferences(PreferenceConstant
                                 .NEWS_PREFERENCE_NAME, MODE_PRIVATE).edit()
                                 .clear()
                                 .apply();

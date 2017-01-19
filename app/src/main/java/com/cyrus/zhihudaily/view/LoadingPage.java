@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.cyrus.zhihudaily.App;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.manager.ThreadManager;
 import com.cyrus.zhihudaily.utils.UiUtils;
@@ -12,7 +13,7 @@ import com.cyrus.zhihudaily.utils.UiUtils;
 /**
  * 首页加载状况视图，根据加载情况可以返回不同的页面
  * <p>
- * Created by weics on 2016/4/26.
+ * Created by Cyrus on 2016/4/26.
  */
 public abstract class LoadingPage extends FrameLayout {
 
@@ -143,7 +144,7 @@ public abstract class LoadingPage extends FrameLayout {
 
 
     public View createEmptyView() {
-        View view = View.inflate(UiUtils.getContext(), R.layout.page_empty, null);
+        View view = View.inflate(App.getAppComponent().getContext(), R.layout.page_empty, null);
         view.findViewById(R.id.page_btn).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,11 +157,11 @@ public abstract class LoadingPage extends FrameLayout {
 
 
     public View createLoadingView() {
-        return View.inflate(UiUtils.getContext(), R.layout.page_loading, null);
+        return View.inflate(App.getAppComponent().getContext(), R.layout.page_loading, null);
     }
 
     public View createErrorView() {
-        View view = View.inflate(UiUtils.getContext(), R.layout.page_error, null);
+        View view = View.inflate(App.getAppComponent().getContext(), R.layout.page_error, null);
         view.findViewById(R.id.page_btn).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

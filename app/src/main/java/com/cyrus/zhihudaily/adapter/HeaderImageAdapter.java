@@ -8,13 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cyrus.zhihudaily.App;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.activity.NewsDetailActivity;
 import com.cyrus.zhihudaily.constants.DataConstant;
 import com.cyrus.zhihudaily.models.SimpleStory;
 import com.cyrus.zhihudaily.models.TopStory;
 import com.cyrus.zhihudaily.utils.ImageUtils;
-import com.cyrus.zhihudaily.utils.UiUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class HeaderImageAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
-        View view = View.inflate(UiUtils.getContext(), R.layout.item_image, null);
+        View view = View.inflate(App.getAppComponent().getContext(), R.layout.item_image, null);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,7 +55,7 @@ public class HeaderImageAdapter extends PagerAdapter {
                 images.add(topStory.getImage());
                 simpleStory.setImages(images);
 
-                Intent intent = new Intent(UiUtils.getContext(), NewsDetailActivity.class);
+                Intent intent = new Intent(App.getAppComponent().getContext(), NewsDetailActivity.class);
                 intent .putExtra(DataConstant.INTENT_NEWS, simpleStory);
                 mContext.startActivity(intent);
             }

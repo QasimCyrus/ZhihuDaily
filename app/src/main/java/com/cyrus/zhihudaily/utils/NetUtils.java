@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.cyrus.zhihudaily.App;
+
 import java.io.IOException;
 
 import okhttp3.OkHttpClient;
@@ -52,7 +54,7 @@ public class NetUtils {
      * @return 已连接返回true，未连接或正在连接返回false
      */
     public static boolean isNetConnectedOrConnecting() {
-        ConnectivityManager manager = (ConnectivityManager) UiUtils.getContext()
+        ConnectivityManager manager = (ConnectivityManager) App.getAppComponent().getContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = manager.getActiveNetworkInfo();
         return info != null && info.isConnectedOrConnecting();
@@ -64,7 +66,7 @@ public class NetUtils {
      * @return 如果当前是wifi连接，则返回true
      */
     public static boolean isWifi() {
-        ConnectivityManager manager = (ConnectivityManager) UiUtils.getContext()
+        ConnectivityManager manager = (ConnectivityManager) App.getAppComponent().getContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = manager.getActiveNetworkInfo();
         return info != null && info.getType() == ConnectivityManager.TYPE_WIFI;

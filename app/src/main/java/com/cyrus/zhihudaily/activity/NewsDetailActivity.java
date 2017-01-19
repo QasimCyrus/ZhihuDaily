@@ -20,7 +20,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-import com.cyrus.zhihudaily.BaseActivity;
+import com.cyrus.zhihudaily.base.BaseActivity;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.constants.DataConstant;
 import com.cyrus.zhihudaily.constants.GlobalConstant;

@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.cyrus.zhihudaily.BaseActivity;
+import com.cyrus.zhihudaily.base.BaseActivity;
 import com.cyrus.zhihudaily.R;
 import com.cyrus.zhihudaily.adapter.SimpleStoryAdapter;
 import com.cyrus.zhihudaily.database.FavoriteNewsDB;
